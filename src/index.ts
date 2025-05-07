@@ -1,14 +1,17 @@
-require("dotenv").config();
-const express = require("express"); //importing exprees
-const cors = require("cors"); //importing cors
-const app = express(); //setting variable to handle express
+import express, {Request, Response} from 'express'
+import cors from 'cors'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const PORT = process.env.PORT || 3005;
+
+const app = express()
 
 app.use(express.json()); //middleware to parse and handle json
 app.use(cors()); //enable cors for all routes
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("Ball Up API");
 });
 
