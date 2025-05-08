@@ -79,4 +79,24 @@ const postDrill = async(drill_type: string, description: string, level: number) 
     }
 }
 
-export { postTrainer, postAthlete, postDrill }
+const postSession = async(length: number, level: number) => {
+
+    try{
+        const newSession = await prisma.session.create({
+            data:{
+                length,
+                level
+            }
+        })
+        return newSession
+    }catch(error){
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+export { postTrainer, postAthlete, postDrill, postSession }

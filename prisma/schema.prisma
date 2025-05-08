@@ -55,6 +55,7 @@ model Drill {
 model Session {
     session_id      Int               @id @default(autoincrement())
     length          Int
+    level           Int
     created_at      DateTime          @default(now())
     Athlete_Session Athlete_Session[]
     Session_Drill   Session_Drill[]
