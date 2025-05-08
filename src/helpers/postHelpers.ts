@@ -103,6 +103,29 @@ const postSession = async(length: number, level: number) => {
 const postAthleteSession = async (athlete_user_id: number, session_id: number) => {
     
     try{
+
+        //check if athlete exists
+        const athlete = await prisma.athlete.findUnique({
+            where: {athlete_user_id}
+        })
+
+        //if doesn't exist log error return null
+        if(!athlete){
+            console.error(`Athlete with ID ${athlete_user_id} not found.`)
+            return null
+        }
+
+        //check if session exists
+        const session = await prisma.session.findUnique({
+            where: {session_id}
+        })
+
+        //if doesn't exist log error return null
+        if(!session){
+            console.error(`Session with ID ${session_id} not found.`)
+            return null
+        }
+
         const newAthleteSession = await prisma.athlete_Session.create({
             data:{
                 athlete_user_id,
@@ -124,12 +147,37 @@ const postAthleteSession = async (athlete_user_id: number, session_id: number) =
 const postSessionDrill = async (session_id: number, drill_id: number) => {
     
     try{
+
+        //check if session exists
+        const session = await prisma.session.findUnique({
+            where: {session_id},
+        })
+
+        //if doesn't exist return error/null
+        if(!session){
+            console.error(`Session with ID ${session_id} not found.`)
+            return null
+        }
+
+        //check if drill exists
+        const drill = await prisma.drill.findUnique({
+            where: {drill_id}
+        })
+
+        //if doesn't exist return error/null
+        if(!drill){
+            console.error(`Drill with ID ${drill_id} not found.`)
+            return null
+        }
+
+        //prisma query to create new
         const newSessionDrill = await prisma.session_Drill.create({
             data:{
                 session_id,
                 drill_id
             }
         })
+        //return result
         return newSessionDrill
     }catch(error){
         //catch if any errors, log and return null
