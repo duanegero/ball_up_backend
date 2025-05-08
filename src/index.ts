@@ -1,15 +1,18 @@
-import express, {Request, Response} from 'express'
+import express, {Request, Response, Router, Application} from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import {trainersRoute} from './routes/trainersRoute'
 
 dotenv.config()
 
 const PORT = process.env.PORT || 3005;
 
-const app = express()
+const app: Application = express()
 
 app.use(express.json()); //middleware to parse and handle json
 app.use(cors()); //enable cors for all routes
+
+app.use("/trainers", trainersRoute)
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Ball Up API");
