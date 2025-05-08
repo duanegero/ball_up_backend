@@ -57,4 +57,30 @@ const getAthletes = async () => {
     }
 }
 
-export {getTrainers, getAthletes}
+const getDrills = async () => {
+    
+    try{
+        //variable for prisma query
+        const drills = await prisma.drill.findMany({
+            orderBy:{drill_type: "asc"},
+            select: {
+                drill_id: true,
+                drill_type: true,
+                description: true,
+                level: true
+            }
+        })
+        //return results 
+        return drills
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+
+export {getTrainers, getAthletes, getDrills}
