@@ -1,5 +1,5 @@
 import express, {Router, Request, Response} from 'express'
-import { postSession } from '../helpers/postHelpers'
+import { postSession, postSessionDrill } from '../helpers/postHelpers'
 const router: Router = express.Router()
 
 router.post("/", async (req: Request, res: Response) => {
@@ -30,6 +30,33 @@ router.post("/", async (req: Request, res: Response) => {
             console.error("An unknown error occurred", error);
         }
         return res.status(500).json({message: "Error creating session."})
+    }
+})
+
+router.post("/session_drills", async (req: Request, res: Response) => {
+    const {session_id, drill_id} = req.body
+
+    if(!session_id || !drill_id){
+        return res.status(400).json({message: "Please provide all required fields."})   
+    }
+
+    try{
+        const newSessionDrill = await postSessionDrill(session_id, drill_id)
+
+        if(!newSessionDrill){
+            return res.status(500).json({message: "Error creating session drill."})
+        }
+
+        //return success status and code 
+        return res.status(201).json({message: "Session drill created successfully"})
+    }catch(error){
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error creating session drill."})
     }
 })
 

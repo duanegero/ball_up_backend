@@ -120,4 +120,25 @@ const postAthleteSession = async (athlete_user_id: number, session_id: number) =
         return null
     }
 }
-export { postTrainer, postAthlete, postDrill, postSession, postAthleteSession }
+
+const postSessionDrill = async (session_id: number, drill_id: number) => {
+    
+    try{
+        const newSessionDrill = await prisma.session_Drill.create({
+            data:{
+                session_id,
+                drill_id
+            }
+        })
+        return newSessionDrill
+    }catch(error){
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+export { postTrainer, postAthlete, postDrill, postSession, postAthleteSession, postSessionDrill }
