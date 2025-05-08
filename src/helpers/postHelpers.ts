@@ -2,7 +2,7 @@ import { PrismaClient,Trainer } from '@prisma/client';
 const prisma = new PrismaClient();
 
 //defining async function with passed in variables
-const postTrainer = async (email: string, username: string, hash_password: string, first_name: string, last_name: string, years_experience: number, bio: string): Promise<Trainer | null>  => {
+const postTrainer = async (email: string, username: string, hash_password: string, first_name: string, last_name: string, years_experience: number, bio: string)  => {
     
     try{
         //variable to handle prisma query to create
@@ -99,4 +99,25 @@ const postSession = async(length: number, level: number) => {
         return null
     }
 }
-export { postTrainer, postAthlete, postDrill, postSession }
+
+const postAthleteSession = async (athlete_user_id: number, session_id: number) => {
+    
+    try{
+        const newAthleteSession = await prisma.athlete_Session.create({
+            data:{
+                athlete_user_id,
+                session_id
+            }
+        })
+        return newAthleteSession
+    }catch(error){
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+export { postTrainer, postAthlete, postDrill, postSession, postAthleteSession }
