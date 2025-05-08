@@ -34,7 +34,7 @@ const postTrainer = async (email: string, username: string, hash_password: strin
 const postAthlete = async (email: string, username: string, hash_password: string, first_name: string, last_name: string, age: number, level: number) => {
     
     try{
-        const newAthlete = prisma.athlete.create({
+        const newAthlete = await prisma.athlete.create({
             data:{
                 email,
                 username,
@@ -57,4 +57,26 @@ const postAthlete = async (email: string, username: string, hash_password: strin
     }
 }
 
-export { postTrainer, postAthlete }
+const postDrill = async(drill_type: string, description: string, level: number) => {
+
+    try{
+        const newDrill = await prisma.drill.create({
+            data: {
+                drill_type,
+                description,
+                level
+            }
+        })
+        return newDrill
+    }catch(error){
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+
+export { postTrainer, postAthlete, postDrill }

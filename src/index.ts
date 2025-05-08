@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import {trainersRoute} from './routes/trainersRoute'
 import {athletesRoute} from './routes/athletesRoute'
+import { drillsRoute } from './routes/drillsRoute'
 
 dotenv.config()
 
@@ -15,6 +16,7 @@ app.use(cors()); //enable cors for all routes
 
 app.use("/trainers", trainersRoute)
 app.use("/athletes", athletesRoute)
+app.use("/drills", drillsRoute)
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Ball Up API");
