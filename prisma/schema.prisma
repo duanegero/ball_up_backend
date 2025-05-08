@@ -8,21 +8,16 @@ datasource db {
 }
 
 model Trainer {
-    trainer_user_id         Int                       @id @default(autoincrement())
-    email                   String                    @unique
-    username                String                    @unique
-    hash_password           String
-    first_name              String
-    last_name               String
-    years_experience        Int?
-    bio                     String?
-    created_at              DateTime                  @default(now())
-    athletes                Athlete[]
-    WarmupDrill             WarmupDrill[]
-    DribblingDrill          DribblingDrill[]
-    ShootingDrills          ShootingDrills[]
-    ReboundingDefenceDrills ReboundingDefenceDrills[]
-    CompletedSession        CompletedSession[]
+    trainer_user_id  Int       @id @default(autoincrement())
+    email            String    @unique
+    username         String    @unique
+    hash_password    String
+    first_name       String
+    last_name        String
+    years_experience Int?
+    bio              String?
+    created_at       DateTime  @default(now())
+    athletes         Athlete[]
 
     @@map("trainers")
 }
@@ -38,130 +33,53 @@ model Athlete {
     level           Int
     created_at      DateTime @default(now())
 
-    trainer_id           Int?
-    half_hour_session_id Int?
-    hour_session_id      Int?
+    trainer_id Int?
 
-    trainer          Trainer?           @relation(fields: [trainer_id], references: [trainer_user_id])
-    CompletedSession CompletedSession[]
+    trainer         Trainer?          @relation(fields: [trainer_id], references: [trainer_user_id])
+    Athlete_Session Athlete_Session[]
 
     @@map("athletes")
 }
 
-model WarmupDrill {
-    warmup_id   Int      @id @default(autoincrement())
-    trainer_id  Int
-    description String
-    level       Int
-    created_at  DateTime @default(now())
+model Drill {
+    drill_id      Int             @id @default(autoincrement())
+    drill_type    String
+    description   String
+    level         Int
+    created_at    DateTime        @default(now())
+    Session_Drill Session_Drill[]
 
-    trainer         Trainer           @relation(fields: [trainer_id], references: [trainer_user_id])
-    HalfHourSession HalfHourSession[]
-    HourSession     HourSession[]
-
-    @@map("warmup_drills")
+    @@map("drills")
 }
 
-model DribblingDrill {
-    dribble_id  Int      @id @default(autoincrement())
-    trainer_id  Int
-    description String
-    level       Int
-    created_at  DateTime @default(now())
+model Session {
+    session_id      Int               @id @default(autoincrement())
+    length          Int
+    created_at      DateTime          @default(now())
+    Athlete_Session Athlete_Session[]
+    Session_Drill   Session_Drill[]
 
-    trainer         Trainer           @relation(fields: [trainer_id], references: [trainer_user_id])
-    HalfHourSession HalfHourSession[]
-    HourSessionOne  HourSession[]     @relation("DribbleOne")
-    HourSessionTwo  HourSession[]     @relation("DribbleTwo")
-
-    @@map("dribbling_drills")
+    @@map("sessions")
 }
 
-model ShootingDrills {
-    shoot_id    Int      @id @default(autoincrement())
-    trainer_id  Int
-    description String
-    level       Int
-    created_at  DateTime @default(now())
+model Athlete_Session {
+    athlete_user_id Int
+    session_id      Int
 
-    trainer          Trainer           @relation(fields: [trainer_id], references: [trainer_user_id])
-    HalfHourSession  HalfHourSession[]
-    HourSessionOne   HourSession[]     @relation("ShootOne")
-    HourSessionTwo   HourSession[]     @relation("ShootTwo")
-    HourSessionThree HourSession[]     @relation("ShootThree")
+    athlete Athlete @relation(fields: [athlete_user_id], references: [athlete_user_id])
+    session Session @relation(fields: [session_id], references: [session_id])
 
-    @@map("shooting_drills")
+    @@id([athlete_user_id, session_id])
+    @@map("athlete_sessions")
 }
 
-model ReboundingDefenceDrills {
-    rebound_defence_id Int      @id @default(autoincrement())
-    trainer_id         Int
-    description        String
-    level              Int
-    created_at         DateTime @default(now())
+model Session_Drill {
+    session_id Int
+    drill_id   Int
 
-    trainer         Trainer           @relation(fields: [trainer_id], references: [trainer_user_id])
-    HalfHourSession HalfHourSession[]
-    HourSessionOne  HourSession[]     @relation("ReboundDefenceOne")
-    HourSessionTwo  HourSession[]     @relation("ReboundDefenceTwo")
+    session Session @relation(fields: [session_id], references: [session_id])
+    drill   Drill   @relation(fields: [drill_id], references: [drill_id])
 
-    @@map("rebounding_defense_drills")
-}
-
-model HalfHourSession {
-    half_hour_session_id Int @id @default(autoincrement())
-
-    warmup_id          Int
-    dribble_id         Int
-    shoot_id           Int
-    rebound_defence_id Int
-
-    warmupDrill            WarmupDrill             @relation(fields: [warmup_id], references: [warmup_id])
-    dribblingDrill         DribblingDrill          @relation(fields: [dribble_id], references: [dribble_id])
-    shootingDrill          ShootingDrills          @relation(fields: [shoot_id], references: [shoot_id])
-    reboundingDefenceDrill ReboundingDefenceDrills @relation(fields: [rebound_defence_id], references: [rebound_defence_id])
-    CompletedSession       CompletedSession[]
-
-    @@map("half_hour_sessions")
-}
-
-model HourSession {
-    hour_session_id        Int      @id @default(autoincrement())
-    warmup_id              Int
-    dribble_id_one         Int
-    dribble_id_two         Int
-    shoot_id_one           Int
-    shoot_id_two           Int
-    shoot_id_three         Int
-    rebound_defence_id_one Int
-    rebound_defence_id_two Int
-    created_at             DateTime @default(now())
-
-    warmupDrill        WarmupDrill             @relation(fields: [warmup_id], references: [warmup_id])
-    dribblingDrillOne  DribblingDrill          @relation("DribbleOne", fields: [dribble_id_one], references: [dribble_id])
-    dribblingDrillTwo  DribblingDrill          @relation("DribbleTwo", fields: [dribble_id_two], references: [dribble_id])
-    shootingDrillOne   ShootingDrills          @relation("ShootOne", fields: [shoot_id_one], references: [shoot_id])
-    shootingDrillTwo   ShootingDrills          @relation("ShootTwo", fields: [shoot_id_two], references: [shoot_id])
-    shootingDrillThree ShootingDrills          @relation("ShootThree", fields: [shoot_id_three], references: [shoot_id])
-    reboundDefenceOne  ReboundingDefenceDrills @relation("ReboundDefenceOne", fields: [rebound_defence_id_one], references: [rebound_defence_id])
-    reboundDefenceTwo  ReboundingDefenceDrills @relation("ReboundDefenceTwo", fields: [rebound_defence_id_two], references: [rebound_defence_id])
-    CompletedSession   CompletedSession[]
-
-    @@map("hour_sessions")
-}
-
-model CompletedSession {
-    completed_session_id Int      @id @default(autoincrement())
-    half_hour_session_id Int?
-    hour_session_id      Int?
-    athlete_id           Int
-    trainer_id           Int
-    created_at           DateTime @default(now())
-
-    halfHourSession HalfHourSession? @relation(fields: [half_hour_session_id], references: [half_hour_session_id])
-    hourSession     HourSession?     @relation(fields: [hour_session_id], references: [hour_session_id])
-    athlete         Athlete          @relation(fields: [athlete_id], references: [athlete_user_id])
-    trainer         Trainer          @relation(fields: [trainer_id], references: [trainer_user_id])
-
-    @@map("completed_sessions")
+    @@id([session_id, drill_id])
+    @@map("session_drills")
 }
