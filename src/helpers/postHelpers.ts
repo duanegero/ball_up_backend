@@ -1,4 +1,4 @@
-import { PrismaClient,Trainer } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 //defining async function with passed in variables
@@ -34,6 +34,7 @@ const postTrainer = async (email: string, username: string, hash_password: strin
 const postAthlete = async (email: string, username: string, hash_password: string, first_name: string, last_name: string, age: number, level: number) => {
     
     try{
+        //prisma query to create new
         const newAthlete = await prisma.athlete.create({
             data:{
                 email,
@@ -45,6 +46,7 @@ const postAthlete = async (email: string, username: string, hash_password: strin
                 level
             },
         })
+        //return result
         return newAthlete
     }catch(error){
         //catch if any errors, log and return null
@@ -60,6 +62,7 @@ const postAthlete = async (email: string, username: string, hash_password: strin
 const postDrill = async(drill_type: string, description: string, level: number) => {
 
     try{
+        //prisma query to create new
         const newDrill = await prisma.drill.create({
             data: {
                 drill_type,
@@ -67,6 +70,7 @@ const postDrill = async(drill_type: string, description: string, level: number) 
                 level
             }
         })
+        //return result
         return newDrill
     }catch(error){
         //catch if any errors, log and return null
@@ -82,12 +86,14 @@ const postDrill = async(drill_type: string, description: string, level: number) 
 const postSession = async(length: number, level: number) => {
 
     try{
+        //prisma query to create new
         const newSession = await prisma.session.create({
             data:{
                 length,
                 level
             }
         })
+        //return result
         return newSession
     }catch(error){
         //catch if any errors, log and return null
@@ -103,7 +109,6 @@ const postSession = async(length: number, level: number) => {
 const postAthleteSession = async (athlete_user_id: number, session_id: number) => {
     
     try{
-
         //check if athlete exists
         const athlete = await prisma.athlete.findUnique({
             where: {athlete_user_id}
@@ -126,12 +131,14 @@ const postAthleteSession = async (athlete_user_id: number, session_id: number) =
             return null
         }
 
+        //prisma query to create new
         const newAthleteSession = await prisma.athlete_Session.create({
             data:{
                 athlete_user_id,
                 session_id
             }
         })
+        //return result
         return newAthleteSession
     }catch(error){
         //catch if any errors, log and return null

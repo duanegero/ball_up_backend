@@ -1,6 +1,7 @@
 import express, {Router, Request, Response} from 'express'
 import bcrypt from 'bcrypt'
 import {postTrainer} from '../helpers/postHelpers'
+import { getTrainers } from '../helpers/getHelpers'
 const router: Router = express.Router()
 
 router.post("/", async (req: Request, res: Response) => {
@@ -35,6 +36,29 @@ router.post("/", async (req: Request, res: Response) => {
         return res.status(500).json({message: "Error creating trainer."})
     }
 })
+
+router.get("/", async (req: Request, res: Response) => {
+    
+    try{
+        //call helper function
+        const trainers = await getTrainers()
+
+        //if nothing returned respond error status
+        if(!trainers){
+            return res.status(500).json({message: "Error fetching trainers."})
+        }
+        //respond success status
+        res.status(200).json(trainers)
+    }catch (error) {
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error fetching trainers."})
+}}
+)
 
 //export to use in app
 export {router as trainersRoute}
