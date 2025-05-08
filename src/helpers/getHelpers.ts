@@ -29,4 +29,32 @@ const getTrainers = async () => {
     }
 }
 
-export {getTrainers}
+const getAthletes = async () => {
+    try{
+        //variable for prisma query
+        const athletes = await prisma.athlete.findMany({
+            orderBy: {created_at: "desc"},
+            select:{
+                athlete_user_id: true,
+                first_name: true,
+                last_name: true,
+                email: true,
+                age: true,
+                level: true
+
+            }
+        })
+        //return results 
+        return athletes
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+
+export {getTrainers, getAthletes}

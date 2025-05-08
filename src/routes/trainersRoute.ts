@@ -57,8 +57,8 @@ router.get("/", async (req: Request, res: Response) => {
             console.error("An unknown error occurred", error);
         }
         return res.status(500).json({message: "Error fetching trainers."})
-}}
-)
+    }
+})
 
 //export to use in app
 export {router as trainersRoute}
