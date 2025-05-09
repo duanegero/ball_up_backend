@@ -86,6 +86,7 @@ const getDrills = async () => {
 const getSessionDrills = async(session_id: number) => {
 
     try{
+        //variable to handle prisma query
         const session_drills = await prisma.session_Drill.findMany({
             where:{session_id},
             include:{
@@ -99,6 +100,7 @@ const getSessionDrills = async(session_id: number) => {
                 }
             }
         })
+        //return results
         return session_drills
     }catch (error) {
         //catch if any errors, log and return null
@@ -111,4 +113,31 @@ const getSessionDrills = async(session_id: number) => {
     }
 }
 
-export {getTrainers, getAthletes, getDrills, getSessionDrills}
+const getTrainer = async (trainer_user_id: number) => {
+    try{
+         //variable to handle prisma query
+        const trainer = await prisma.trainer.findUnique({
+            where:{trainer_user_id},
+            select:{
+                trainer_user_id: true,
+                email: true,
+                first_name: true,
+                last_name: true,
+                years_experience: true,
+                bio: true
+            }
+        })
+        //return results
+        return trainer
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+
+export {getTrainers, getAthletes, getDrills, getSessionDrills, getTrainer}

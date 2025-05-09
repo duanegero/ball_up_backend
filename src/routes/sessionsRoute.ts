@@ -62,11 +62,14 @@ router.post("/session_drills", async (req: Request, res: Response) => {
 })
 
 router.get("/session_drills/:id", async (req: Request, res: Response) => {
+    //parse the id from the url
     const session_id = parseInt(req.params.id)
 
     try{
+        //call to the helper 
         const session_drills = await getSessionDrills(session_id)
 
+        //if nothing returned responed error status
         if(!session_drills){
             return res.status(500).json({message: "Error fetching session drills."})
         }

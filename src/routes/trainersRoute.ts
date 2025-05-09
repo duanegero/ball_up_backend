@@ -1,9 +1,10 @@
 import express, {Router, Request, Response} from 'express'
 import bcrypt from 'bcrypt'
 import {postTrainer} from '../helpers/postHelpers'
-import { getTrainers } from '../helpers/getHelpers'
+import { getTrainers, getTrainer } from '../helpers/getHelpers'
 const router: Router = express.Router()
 
+//router to post new trainer
 router.post("/", async (req: Request, res: Response) => {
     //getting the info from the request body
     const {email, username, password, first_name, last_name, years_experience, bio} = req.body
@@ -37,6 +38,7 @@ router.post("/", async (req: Request, res: Response) => {
     }
 })
 
+//router to get all trainers 
 router.get("/", async (req: Request, res: Response) => {
     
     try{
@@ -57,6 +59,32 @@ router.get("/", async (req: Request, res: Response) => {
             console.error("An unknown error occurred", error);
         }
         return res.status(500).json({message: "Error fetching trainers."})
+    }
+})
+
+router.get("/:id", async (req: Request, res: Response) => {
+    //parse id from url
+    const trainer_user_id = parseInt(req.params.id)
+
+    try{
+        //call to helper function
+        const trainer = await getTrainer(trainer_user_id)
+
+        //if nothing return return error status
+        if(!trainer){
+            return res.status(500).json({message: "Error fetching trainer."})
+        }
+
+        //return success status and json
+        res.status(200).json(trainer)
+    }catch (error) {
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error fetching trainer."})
     }
 })
 
