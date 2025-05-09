@@ -83,4 +83,32 @@ const getDrills = async () => {
     }
 }
 
-export {getTrainers, getAthletes, getDrills}
+const getSessionDrills = async(session_id: number) => {
+
+    try{
+        const session_drills = await prisma.session_Drill.findMany({
+            where:{session_id},
+            include:{
+                drill: {
+                    select: {
+                        drill_id: true,
+                        drill_type: true,
+                        description: true,
+                        level: true
+                    }
+                }
+            }
+        })
+        return session_drills
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+
+export {getTrainers, getAthletes, getDrills, getSessionDrills}
