@@ -167,4 +167,42 @@ const getAthlete = async (athlete_user_id: number) => {
     }
 }
 
-export {getTrainers, getAthletes, getDrills, getSessionDrills, getTrainer, getAthlete}
+const getAthleteSessions = async(athlete_user_id: number) => {
+    try{
+
+        //varaible to handle prisma query
+        const athlete_sessions = await prisma.athlete_Session.findMany({
+            where:{athlete_user_id},
+            include:{
+                session:{
+                    select:{
+                        level: true,
+                        length: true,
+                        Session_Drill:{
+                            select:{
+                                drill:{
+                                    select:{
+                                        drill_type: true,
+                                        description: true,
+                                        level: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        return athlete_sessions
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+
+export {getTrainers, getAthletes, getDrills, getSessionDrills, getTrainer, getAthlete, getAthleteSessions}

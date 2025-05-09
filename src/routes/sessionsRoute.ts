@@ -3,6 +3,7 @@ import { postSession, postSessionDrill } from '../helpers/postHelpers'
 import { getSessionDrills } from '../helpers/getHelpers'
 const router: Router = express.Router()
 
+//router to post a session
 router.post("/", async (req: Request, res: Response) => {
     //getting the info from the request body
     const {length, level} = req.body
@@ -34,6 +35,7 @@ router.post("/", async (req: Request, res: Response) => {
     }
 })
 
+//router to post drill to session
 router.post("/session_drills", async (req: Request, res: Response) => {
     const {session_id, drill_id} = req.body
 
@@ -61,6 +63,7 @@ router.post("/session_drills", async (req: Request, res: Response) => {
     }
 })
 
+//router to get a session's drills 
 router.get("/session_drills/:id", async (req: Request, res: Response) => {
     //parse the id from the url
     const session_id = parseInt(req.params.id)

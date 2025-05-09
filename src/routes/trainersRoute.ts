@@ -62,6 +62,7 @@ router.get("/", async (req: Request, res: Response) => {
     }
 })
 
+//router to get a trainer by id
 router.get("/:id", async (req: Request, res: Response) => {
     //parse id from url
     const trainer_user_id = parseInt(req.params.id)

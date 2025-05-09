@@ -3,6 +3,7 @@ import { postDrill } from '../helpers/postHelpers'
 import { getDrills } from '../helpers/getHelpers'
 const router: Router = express.Router()
 
+//router to post a new drill
 router.post("/", async (req: Request, res: Response) => {
     //getting the info from the request body
     const {drill_type, description, level} = req.body
@@ -34,6 +35,7 @@ router.post("/", async (req: Request, res: Response) => {
     }
 })
 
+//router to get all drills 
 router.get("/", async (req: Request, res: Response) => {
     
     try{
