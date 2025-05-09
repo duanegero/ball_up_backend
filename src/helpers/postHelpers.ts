@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-//defining async function with passed in variables
+//helper to post trainer
 const postTrainer = async (email: string, username: string, hash_password: string, first_name: string, last_name: string, years_experience: number, bio: string)  => {
     
     try{
@@ -31,6 +31,7 @@ const postTrainer = async (email: string, username: string, hash_password: strin
     }
 }
 
+//helper to post athlete
 const postAthlete = async (email: string, username: string, hash_password: string, first_name: string, last_name: string, age: number, level: number) => {
     
     try{
@@ -59,6 +60,7 @@ const postAthlete = async (email: string, username: string, hash_password: strin
     }
 }
 
+//helper to post a drill
 const postDrill = async(drill_type: string, description: string, level: number) => {
 
     try{
@@ -83,6 +85,7 @@ const postDrill = async(drill_type: string, description: string, level: number) 
     }
 }
 
+//helper to post a session
 const postSession = async(length: number, level: number) => {
 
     try{
@@ -106,6 +109,7 @@ const postSession = async(length: number, level: number) => {
     }
 }
 
+//helper to post assign session to athlete 
 const postAthleteSession = async (athlete_user_id: number, session_id: number) => {
     
     try{
@@ -151,6 +155,7 @@ const postAthleteSession = async (athlete_user_id: number, session_id: number) =
     }
 }
 
+//helper to post drill to a session
 const postSessionDrill = async (session_id: number, drill_id: number) => {
     
     try{

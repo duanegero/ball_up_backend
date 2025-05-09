@@ -1,7 +1,7 @@
 import express, {Router, Request, Response} from 'express'
 import bcrypt from 'bcrypt'
 import {postTrainer} from '../helpers/postHelpers'
-import { getTrainers, getTrainer } from '../helpers/getHelpers'
+import { getTrainers, getTrainer, getTrainerAthletes } from '../helpers/getHelpers'
 const router: Router = express.Router()
 
 //router to post new trainer
@@ -86,6 +86,31 @@ router.get("/:id", async (req: Request, res: Response) => {
             console.error("An unknown error occurred", error);
         }
         return res.status(500).json({message: "Error fetching trainer."})
+    }
+})
+
+router.get("/athletes/:id", async (req: Request, res: Response) => {
+    
+    const trainer_user_id = parseInt(req.params.id)
+
+    try{
+
+        const trainer_athletes = await getTrainerAthletes(trainer_user_id)
+
+        if(!trainer_athletes){
+            return res.status(500).json({message: "Error fetching trainers athletes."})
+        }
+
+        res.status(200).json(trainer_athletes)
+
+    }catch (error) {
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error fetching trainers athletes."})
     }
 })
 

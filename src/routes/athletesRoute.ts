@@ -2,6 +2,7 @@ import express, {Router, Request, Response} from 'express'
 import bcrypt from 'bcrypt'
 import { postAthlete, postAthleteSession } from '../helpers/postHelpers'
 import { getAthletes, getAthlete, getAthleteSessions } from '../helpers/getHelpers'
+import { putAthleteTrainer } from '../helpers/putHelpers'
 const router: Router = express.Router()
 
 //router to post a new athlete
@@ -122,6 +123,7 @@ router.get("/:id", async (req: Request, res: Response) => {
     }
 })
 
+//router to get all athletes sessions 
 router.get("/athlete_sessions/:id", async (req: Request, res: Response) => {
     //parse id from url
     const athlete_user_id = parseInt(req.params.id)
@@ -146,6 +148,40 @@ router.get("/athlete_sessions/:id", async (req: Request, res: Response) => {
             console.error("An unknown error occurred", error);
         }
         return res.status(500).json({message: "Error fetching athletes sessions."})
+    }
+})
+
+//router to post a trainer to an athlete 
+router.put("/assign_trainer/:id", async (req: Request, res: Response) => {
+    
+    //getting ids from url and body
+    const athlete_user_id = parseInt(req.params.id)
+    const {trainer_id} = req.body
+
+    //if no id respond error status
+    if(!trainer_id){
+        return res.status(400).json({message: "Trainer ID required "})
+    }
+
+    try{
+        //call helper function 
+        const updatedAthleteTrainer = await putAthleteTrainer(athlete_user_id, trainer_id)
+
+        //if nothing return respond error
+        if(!updatedAthleteTrainer){
+            return res.status(500).json({message: "Error updating athlete trainer."})
+        }
+        
+        //respond success status and json
+        res.status(200).json(updatedAthleteTrainer)
+    }catch (error) {
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error updating athlete trainer."})
     }
 })
 

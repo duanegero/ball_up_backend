@@ -193,6 +193,7 @@ const getAthleteSessions = async(athlete_user_id: number) => {
                 }
             }
         })
+        //return results
         return athlete_sessions
     }catch (error) {
         //catch if any errors, log and return null
@@ -205,4 +206,31 @@ const getAthleteSessions = async(athlete_user_id: number) => {
     }
 }
 
-export {getTrainers, getAthletes, getDrills, getSessionDrills, getTrainer, getAthlete, getAthleteSessions}
+const getTrainerAthletes = async(trainer_user_id: number) => {
+    try{
+        //variable to handle prisma query
+        const trainer_athletes = await prisma.athlete.findMany({
+            where:{trainer_id: trainer_user_id},
+            select:{
+                athlete_user_id: true,
+                first_name: true,
+                last_name: true,
+                email: true,
+                age: true,
+                level: true
+            }
+        })
+        //return results 
+        return trainer_athletes
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+
+export {getTrainers, getAthletes, getDrills, getSessionDrills, getTrainer, getAthlete, getAthleteSessions, getTrainerAthletes}
