@@ -18,7 +18,16 @@ const putAthleteTrainer = async (athlete_user_id: number, trainer_id: number) =>
         //query to update the row
         const updatedAthleteTrainer = await prisma.athlete.update({
             where:{athlete_user_id},
-            data:{trainer_id}
+            data:{trainer_id},
+            select:{
+                athlete_user_id: true,
+                first_name: true,
+                last_name: true,
+                email: true,
+                age: true,
+                level: true,
+                trainer_id: true
+            }
         })
 
         //return updated row

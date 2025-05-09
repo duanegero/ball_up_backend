@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
+//helper to get all trainer
 const getTrainers = async () => {
     try{
         //variable for prisma query
@@ -29,6 +30,7 @@ const getTrainers = async () => {
     }
 }
 
+//helper to get all athletes
 const getAthletes = async () => {
     try{
         //variable for prisma query
@@ -57,6 +59,7 @@ const getAthletes = async () => {
     }
 }
 
+//helper to get all drills 
 const getDrills = async () => {
     
     try{
@@ -83,6 +86,7 @@ const getDrills = async () => {
     }
 }
 
+//helper to get session drills 
 const getSessionDrills = async(session_id: number) => {
 
     try{
@@ -113,6 +117,7 @@ const getSessionDrills = async(session_id: number) => {
     }
 }
 
+//helper to get a single trainer
 const getTrainer = async (trainer_user_id: number) => {
     try{
         //variable to handle prisma query
@@ -140,6 +145,7 @@ const getTrainer = async (trainer_user_id: number) => {
     }
 }
 
+//helper to get a single athlete
 const getAthlete = async (athlete_user_id: number) => {
     try{
         //variable to handle prisma query
@@ -167,6 +173,7 @@ const getAthlete = async (athlete_user_id: number) => {
     }
 }
 
+//helper to get athlete sessions
 const getAthleteSessions = async(athlete_user_id: number) => {
     try{
 
@@ -206,6 +213,7 @@ const getAthleteSessions = async(athlete_user_id: number) => {
     }
 }
 
+//helper to get trainers athletes
 const getTrainerAthletes = async(trainer_user_id: number) => {
     try{
         //variable to handle prisma query
