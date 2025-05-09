@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Trainer } from '@prisma/client';
 const prisma = new PrismaClient();
 
 //helper to put a tainer on a athlete
@@ -43,4 +43,54 @@ const putAthleteTrainer = async (athlete_user_id: number, trainer_id: number) =>
     }
 }
 
-export {putAthleteTrainer}
+const putTrainer = async (trainer_user_id: number, updatedFields: Partial<Trainer>) => {
+    try{
+
+   //check if trainer exist
+    const trainerExists = await prisma.trainer.findUnique({
+        where:{trainer_user_id}
+    })
+
+    //if not return null
+    if(!trainerExists){
+        return null
+    }
+
+    //filter out nulls and undfineds
+    const fieldsToUpdate = Object.fromEntries(
+        Object.entries(updatedFields).filter(([_, value]) => value !== undefined && value !== null)
+    )
+
+    //if nothing found to update return null
+    if(Object.keys(fieldsToUpdate).length === 0){
+        return null
+    }
+
+    //prisma query to update 
+    const updatedTrainer = await prisma.trainer.update({
+        where:{trainer_user_id},
+        data: fieldsToUpdate,
+        select:{
+            trainer_user_id: true,
+            first_name: true,
+            last_name: true,
+            email: true,
+            years_experience: true,
+            bio: true
+        }
+    })
+
+    //return results
+    return updatedTrainer
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+
+export {putAthleteTrainer, putTrainer}

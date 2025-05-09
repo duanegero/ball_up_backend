@@ -2,6 +2,7 @@ import express, {Router, Request, Response} from 'express'
 import bcrypt from 'bcrypt'
 import {postTrainer} from '../helpers/postHelpers'
 import { getTrainers, getTrainer, getTrainerAthletes } from '../helpers/getHelpers'
+import { putTrainer } from '../helpers/putHelpers'
 const router: Router = express.Router()
 
 //router to post new trainer
@@ -89,6 +90,7 @@ router.get("/:id", async (req: Request, res: Response) => {
     }
 })
 
+//router to get trainers athletes
 router.get("/athletes/:id", async (req: Request, res: Response) => {
     
     const trainer_user_id = parseInt(req.params.id)
@@ -111,6 +113,35 @@ router.get("/athletes/:id", async (req: Request, res: Response) => {
             console.error("An unknown error occurred", error);
         }
         return res.status(500).json({message: "Error fetching trainers athletes."})
+    }
+})
+
+//router to put a trainer 
+router.put("/:id", async (req: Request, res: Response) => {
+    //get id from the url
+    const trainer_user_id = parseInt(req.params.id)
+    //get the updates from body
+    const updatedFields = req.body
+
+    try{
+        //call to helper function
+        const updatedTrainer = await putTrainer(trainer_user_id, updatedFields)
+
+        //if nothing returned respond error status
+        if(!updatedTrainer){
+            return res.status(404).json({message: "Error updating trainer."})
+        }
+
+        //respond success status 
+        res.status(200).json(updatedTrainer)
+    }catch (error) {
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error updating trainer."})
     }
 })
 
