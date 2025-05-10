@@ -26,6 +26,7 @@ model Trainer {
     bio              String?
     created_at       DateTime  @default(now())
     athletes         Athlete[]
+    Drill            Drill[]
 
     @@map("trainers")
 }
@@ -50,12 +51,14 @@ model Athlete {
 }
 
 model Drill {
-    drill_id      Int             @id @default(autoincrement())
-    drill_type    DrillType
-    description   String
-    level         Int
-    created_at    DateTime        @default(now())
-    Session_Drill Session_Drill[]
+    drill_id        Int             @id @default(autoincrement())
+    drill_type      DrillType
+    description     String
+    level           Int
+    trainer_user_id Int?
+    trainer         Trainer?        @relation(fields: [trainer_user_id], references: [trainer_user_id])
+    created_at      DateTime        @default(now())
+    Session_Drill   Session_Drill[]
 
     @@map("drills")
 }

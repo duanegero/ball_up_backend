@@ -61,6 +61,7 @@ router.get("/", async (req: Request, res: Response) => {
     }
 })
 
+//router to put a drill
 router.put("/:id", async (req: Request, res: Response) => {
     const drill_id = parseInt(req.params.id)
 

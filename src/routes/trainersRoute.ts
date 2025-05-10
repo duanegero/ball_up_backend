@@ -93,16 +93,19 @@ router.get("/:id", async (req: Request, res: Response) => {
 //router to get trainers athletes
 router.get("/athletes/:id", async (req: Request, res: Response) => {
     
+    //getting id from url
     const trainer_user_id = parseInt(req.params.id)
 
     try{
-
+        //call to helper function
         const trainer_athletes = await getTrainerAthletes(trainer_user_id)
 
+        //if nothing return respond error status
         if(!trainer_athletes){
             return res.status(500).json({message: "Error fetching trainers athletes."})
         }
 
+        //return success status 
         res.status(200).json(trainer_athletes)
 
     }catch (error) {
@@ -113,6 +116,32 @@ router.get("/athletes/:id", async (req: Request, res: Response) => {
             console.error("An unknown error occurred", error);
         }
         return res.status(500).json({message: "Error fetching trainers athletes."})
+    }
+})
+
+router.get("/drills/:id", async (req: Request, res: Response) => {
+    
+    //getting id from url
+    const trainer_user_id = parseInt(req.params.id)
+
+    try{
+        //call to helper function
+        const trainer_drills = await getTrainerDrills(trainer_user_id)
+
+        //if nothing return respond error status
+        if(!trainer_drills){
+            return res.status(500).json({message: "Error fetching trainers drills."})
+        }
+
+        res.status(200).json(trainer_drills)
+    }catch (error) {
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error fetching trainers drills."})
     }
 })
 

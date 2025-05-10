@@ -36,8 +36,9 @@ router.post("/", async (req: Request, res: Response) => {
 })
 
 //router to post drill to session
-router.post("/session_drills", async (req: Request, res: Response) => {
-    const {session_id, drill_id} = req.body
+router.post("/session_drills/:id", async (req: Request, res: Response) => {
+    const session_id = parseInt(req.params.id)
+    const {drill_id} = req.body
 
     if(!session_id || !drill_id){
         return res.status(400).json({message: "Please provide all required fields."})   
@@ -63,15 +64,19 @@ router.post("/session_drills", async (req: Request, res: Response) => {
     }
 })
 
+//route to get a sessions
 router.get("/", async (req: Request, res: Response) => {
     
     try{
+        //call helper function
         const sessions = await getSessions()
 
+        //if nothing returned respond error status
         if(!sessions){
             return res.status(500).json({message: "Error fetching sessions."})
         }
 
+        //return success status
         res.status(200).json(sessions)
     }catch (error) {
         //catch if any errors, respond codes and status 

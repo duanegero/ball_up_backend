@@ -40,9 +40,11 @@ router.post("/", async (req: Request, res: Response) => {
 })
 
 //router to post a new athlete session
-router.post("/athlete_sessions", async (req:Request, res: Response) => {
+router.post("/athlete_sessions/:id", async (req:Request, res: Response) => {
+    
+    const session_id = parseInt(req.params.id)
     //getting the info from the request body
-    const {athlete_user_id, session_id } = req.body
+    const {athlete_user_id} = req.body
 
     //if all fields aren't filled return error 
     if(!athlete_user_id || !session_id){
