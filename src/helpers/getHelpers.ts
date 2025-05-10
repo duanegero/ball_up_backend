@@ -70,7 +70,8 @@ const getDrills = async () => {
                 drill_id: true,
                 drill_type: true,
                 description: true,
-                level: true
+                level: true,
+                trainer_user_id: true
             }
         })
         //return results 
@@ -266,5 +267,11 @@ const getTrainerAthletes = async(trainer_user_id: number) => {
         return null
     }
 }
+
+// const getTrainerDrills = async (trainer_user_id: number) => {
+//     try{
+//         const trainer_drills = await prisma.drill.findMany({})
+//     }
+// }
 
 export {getTrainers, getAthletes, getDrills, getSessions, getSessionDrills, getTrainer, getAthlete, getAthleteSessions, getTrainerAthletes}

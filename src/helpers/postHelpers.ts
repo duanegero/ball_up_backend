@@ -61,7 +61,7 @@ const postAthlete = async (email: string, username: string, hash_password: strin
 }
 
 //helper to post a drill
-const postDrill = async(drill_type: DrillType , description: string, level: number) => {
+const postDrill = async(drill_type: DrillType , description: string, level: number, trainer_user_id: number) => {
 
     try{
         //prisma query to create new
@@ -69,7 +69,8 @@ const postDrill = async(drill_type: DrillType , description: string, level: numb
             data: {
                 drill_type,
                 description,
-                level
+                level,
+                trainer_user_id 
             }
         })
         //return result

@@ -7,7 +7,7 @@ const router: Router = express.Router()
 //router to post a new drill
 router.post("/", async (req: Request, res: Response) => {
     //getting the info from the request body
-    const {drill_type, description, level} = req.body
+    const {drill_type, description, level, trainer_user_id } = req.body
 
     //if all fields aren't filled return error 
     if(!drill_type || !description || typeof level !== 'number'){
@@ -16,7 +16,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     try{
         //variable to handle call to helper function with passed in variables 
-        const newDrill = await postDrill(drill_type, description, level)
+        const newDrill = await postDrill(drill_type, description, level, trainer_user_id )
 
         //if nothing returned, respond error status and message
         if(!newDrill){
