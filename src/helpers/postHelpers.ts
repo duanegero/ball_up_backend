@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, DrillType } from '@prisma/client';
 const prisma = new PrismaClient();
 
 //helper to post trainer
@@ -61,7 +61,7 @@ const postAthlete = async (email: string, username: string, hash_password: strin
 }
 
 //helper to post a drill
-const postDrill = async(drill_type: string, description: string, level: number) => {
+const postDrill = async(drill_type: DrillType , description: string, level: number) => {
 
     try{
         //prisma query to create new

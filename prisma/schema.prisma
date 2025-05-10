@@ -7,6 +7,14 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+enum DrillType {
+    shoot
+    dribble
+    pass
+    reb_defence
+    warmup
+}
+
 model Trainer {
     trainer_user_id  Int       @id @default(autoincrement())
     email            String    @unique
@@ -43,7 +51,7 @@ model Athlete {
 
 model Drill {
     drill_id      Int             @id @default(autoincrement())
-    drill_type    String
+    drill_type    DrillType
     description   String
     level         Int
     created_at    DateTime        @default(now())

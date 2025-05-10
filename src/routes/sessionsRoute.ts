@@ -1,6 +1,6 @@
 import express, {Router, Request, Response} from 'express'
 import { postSession, postSessionDrill } from '../helpers/postHelpers'
-import { getSessionDrills } from '../helpers/getHelpers'
+import { getSessionDrills, getSessions } from '../helpers/getHelpers'
 const router: Router = express.Router()
 
 //router to post a session
@@ -60,6 +60,27 @@ router.post("/session_drills", async (req: Request, res: Response) => {
             console.error("An unknown error occurred", error);
         }
         return res.status(500).json({message: "Error creating session drill."})
+    }
+})
+
+router.get("/", async (req: Request, res: Response) => {
+    
+    try{
+        const sessions = await getSessions()
+
+        if(!sessions){
+            return res.status(500).json({message: "Error fetching sessions."})
+        }
+
+        res.status(200).json(sessions)
+    }catch (error) {
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error fetching sessions."})
     }
 })
 

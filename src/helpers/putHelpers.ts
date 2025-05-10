@@ -1,4 +1,4 @@
-import { PrismaClient, Trainer, Athlete } from '@prisma/client';
+import { PrismaClient, Trainer, Athlete, Drill } from '@prisma/client';
 const prisma = new PrismaClient();
 
 //helper to put a tainer on a athlete
@@ -142,4 +142,45 @@ const putAthlete = async (athlete_user_id: number, updatedFields: Partial<Athlet
     }
 }
 
-export {putAthleteTrainer, putTrainer, putAthlete}
+const putDrill = async (drill_id: number, updatedFields: Partial<Drill>) => {
+    try{
+        const drillExists = await prisma.drill.findUnique({
+            where: {drill_id}
+        })
+
+        if(!drillExists){
+            return null
+        }
+
+        //filter out nulls and undfineds
+        const fieldsToUpdate = Object.fromEntries(
+        Object.entries(updatedFields).filter(([_, value]) => value !== undefined && value !== null)
+        )
+
+        //if nothing found to update return null
+        if(Object.keys(fieldsToUpdate).length === 0){
+        return null
+        }
+
+        const updatedDrill = await prisma.drill.update({
+            where:{drill_id},
+            data: fieldsToUpdate,
+            select:{
+                drill_id: true,
+                drill_type: true,
+                description: true
+            }
+        })
+        return updatedDrill
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+
+export {putAthleteTrainer, putTrainer, putAthlete, putDrill}

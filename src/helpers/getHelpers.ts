@@ -86,6 +86,32 @@ const getDrills = async () => {
     }
 }
 
+const getSessions = async () => {
+    
+    try{
+        //variable for prisma query
+        const sessions = await prisma.session.findMany({
+            orderBy: {created_at: "desc"},
+            select:{
+                session_id: true,
+                length: true,
+                level: true,
+                created_at: true
+            }
+        })
+        //return results
+        return sessions
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+
 //helper to get session drills 
 const getSessionDrills = async(session_id: number) => {
 
@@ -241,4 +267,4 @@ const getTrainerAthletes = async(trainer_user_id: number) => {
     }
 }
 
-export {getTrainers, getAthletes, getDrills, getSessionDrills, getTrainer, getAthlete, getAthleteSessions, getTrainerAthletes}
+export {getTrainers, getAthletes, getDrills, getSessions, getSessionDrills, getTrainer, getAthlete, getAthleteSessions, getTrainerAthletes}
