@@ -87,6 +87,7 @@ const getDrills = async () => {
     }
 }
 
+//helper to get all sessions
 const getSessions = async () => {
     
     try{
@@ -268,10 +269,30 @@ const getTrainerAthletes = async(trainer_user_id: number) => {
     }
 }
 
-// const getTrainerDrills = async (trainer_user_id: number) => {
-//     try{
-//         const trainer_drills = await prisma.drill.findMany({})
-//     }
-// }
+//helper to get trainers drills 
+const getTrainerDrills = async (trainer_user_id: number) => {
+    try{
+        //variable to handle prisma query
+        const trainer_drills = await prisma.drill.findMany({
+            where:{trainer_user_id},
+            select:{
+                drill_id: true,
+                drill_type: true,
+                description: true,
+                level: true
+            }
+        })
+        //return results 
+        return trainer_drills
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
 
-export {getTrainers, getAthletes, getDrills, getSessions, getSessionDrills, getTrainer, getAthlete, getAthleteSessions, getTrainerAthletes}
+export {getTrainers, getAthletes, getDrills, getSessions, getSessionDrills, getTrainer, getAthlete, getAthleteSessions, getTrainerAthletes, getTrainerDrills}

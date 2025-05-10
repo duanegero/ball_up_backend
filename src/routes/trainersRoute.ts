@@ -1,7 +1,7 @@
 import express, {Router, Request, Response} from 'express'
 import bcrypt from 'bcrypt'
 import {postTrainer} from '../helpers/postHelpers'
-import { getTrainers, getTrainer, getTrainerAthletes } from '../helpers/getHelpers'
+import { getTrainers, getTrainer, getTrainerAthletes, getTrainerDrills } from '../helpers/getHelpers'
 import { putTrainer } from '../helpers/putHelpers'
 const router: Router = express.Router()
 
@@ -119,31 +119,32 @@ router.get("/athletes/:id", async (req: Request, res: Response) => {
     }
 })
 
-// router.get("/drills/:id", async (req: Request, res: Response) => {
+//router to get all trainers drills
+router.get("/drills/:id", async (req: Request, res: Response) => {
     
-//     //getting id from url
-//     const trainer_user_id = parseInt(req.params.id)
+    //getting id from url
+    const trainer_user_id = parseInt(req.params.id)
 
-//     try{
-//         //call to helper function
-//         const trainer_drills = await getTrainerDrills(trainer_user_id)
+    try{
+        //call to helper function
+        const trainer_drills = await getTrainerDrills(trainer_user_id)
 
-//         //if nothing return respond error status
-//         if(!trainer_drills){
-//             return res.status(500).json({message: "Error fetching trainers drills."})
-//         }
+        //if nothing return respond error status
+        if(!trainer_drills){
+            return res.status(500).json({message: "Error fetching trainers drills."})
+        }
 
-//         res.status(200).json(trainer_drills)
-//     }catch (error) {
-//         //catch if any errors, respond codes and status 
-//         if (error instanceof Error) {
-//             console.error(error.message, error.stack);
-//         } else {
-//             console.error("An unknown error occurred", error);
-//         }
-//         return res.status(500).json({message: "Error fetching trainers drills."})
-//     }
-// })
+        res.status(200).json(trainer_drills)
+    }catch (error) {
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error fetching trainers drills."})
+    }
+})
 
 //router to put a trainer 
 router.put("/:id", async (req: Request, res: Response) => {
