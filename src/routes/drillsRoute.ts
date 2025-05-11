@@ -2,6 +2,7 @@ import express, {Router, Request, Response} from 'express'
 import { postDrill } from '../helpers/postHelpers'
 import { getDrills } from '../helpers/getHelpers'
 import { putDrill } from '../helpers/putHelpers'
+import { deleteDrillFromSessions, deleteDrill } from '../helpers/deleteHelpers'
 const router: Router = express.Router()
 
 //router to post a new drill
@@ -85,6 +86,28 @@ router.put("/:id", async (req: Request, res: Response) => {
         }
         return res.status(500).json({message: "Error updating athlete."})
     }
+})
+
+router.delete("/:id", async (req: Request, res: Response) => {
+    
+    const drill_id = parseInt(req.params.id)
+
+    try{
+        await deleteDrillFromSessions(drill_id)
+
+        await deleteDrill(drill_id) 
+        
+        res.status(200).json({message: `Drill ${drill_id} deleted.`})
+    }catch (error) {
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error deleting drill."})
+    }
+
 })
 
 //export to use in app

@@ -184,13 +184,13 @@ router.delete("/:id", async (req: Request, res: Response) => {
 
     try{
         //helper to delete drills
-        const delete_trainer_drills = await deleteTrainerDrills(trainer_user_id)
+        await deleteTrainerDrills(trainer_user_id)
 
         //update athletes trainer 
-        const update_athlete_trainer_null = await putAthleteTrainerNull(trainer_user_id)
+        await putAthleteTrainerNull(trainer_user_id)
 
         //delete trainer 
-        const delete_trainer = await deleteTrainer(trainer_user_id)
+        await deleteTrainer(trainer_user_id)
 
         //return success status
         res.status(200).json({message: `Trainer ${trainer_user_id} deleted.`})
