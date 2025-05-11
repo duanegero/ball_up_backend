@@ -42,9 +42,9 @@ model Athlete {
     level           Int
     created_at      DateTime @default(now())
 
-    trainer_id Int?
+    trainer_user_id Int?
 
-    trainer         Trainer?          @relation(fields: [trainer_id], references: [trainer_user_id])
+    trainer         Trainer?          @relation(fields: [trainer_user_id], references: [trainer_user_id])
     Athlete_Session Athlete_Session[]
 
     @@map("athletes")

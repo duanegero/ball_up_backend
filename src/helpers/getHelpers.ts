@@ -246,7 +246,7 @@ const getTrainerAthletes = async(trainer_user_id: number) => {
     try{
         //variable to handle prisma query
         const trainer_athletes = await prisma.athlete.findMany({
-            where:{trainer_id: trainer_user_id},
+            where:{trainer_user_id},
             select:{
                 athlete_user_id: true,
                 first_name: true,

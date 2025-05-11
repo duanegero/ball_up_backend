@@ -2,12 +2,12 @@ import { PrismaClient, Trainer, Athlete, Drill } from '@prisma/client';
 const prisma = new PrismaClient();
 
 //helper to put a tainer on a athlete
-const putAthleteTrainer = async (athlete_user_id: number, trainer_id: number) => {
+const putAthleteTrainer = async (athlete_user_id: number, trainer_user_id: number) => {
     try{
 
         //check if trainer exists
         const trainerExists = await prisma.trainer.findUnique({
-            where: { trainer_user_id: trainer_id }
+            where: { trainer_user_id }
         });
         
         //if not return null
@@ -18,7 +18,7 @@ const putAthleteTrainer = async (athlete_user_id: number, trainer_id: number) =>
         //query to update the row
         const updatedAthleteTrainer = await prisma.athlete.update({
             where:{athlete_user_id},
-            data:{trainer_id},
+            data:{trainer_user_id},
             select:{
                 athlete_user_id: true,
                 first_name: true,
@@ -26,7 +26,7 @@ const putAthleteTrainer = async (athlete_user_id: number, trainer_id: number) =>
                 email: true,
                 age: true,
                 level: true,
-                trainer_id: true
+                trainer_user_id: true
             }
         })
 
@@ -94,6 +94,7 @@ const putTrainer = async (trainer_user_id: number, updatedFields: Partial<Traine
     }
 }
 
+//helper to put athlete info
 const putAthlete = async (athlete_user_id: number, updatedFields: Partial<Athlete>) => {
 
     try{
@@ -142,6 +143,7 @@ const putAthlete = async (athlete_user_id: number, updatedFields: Partial<Athlet
     }
 }
 
+//helper to put drill info
 const putDrill = async (drill_id: number, updatedFields: Partial<Drill>) => {
     try{
         const drillExists = await prisma.drill.findUnique({
@@ -183,4 +185,26 @@ const putDrill = async (drill_id: number, updatedFields: Partial<Drill>) => {
     }
 }
 
-export {putAthleteTrainer, putTrainer, putAthlete, putDrill}
+//helper to put athlete trainer null
+const putAthleteTrainerNull = async (trainer_user_id: number) => {
+
+    try{
+        const update_athlete_trainer_null = await prisma.athlete.updateMany({
+            where: {trainer_user_id},
+            data: {trainer_user_id: null}
+        })
+
+        return update_athlete_trainer_null
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+    
+}
+
+export {putAthleteTrainer, putTrainer, putAthlete, putDrill, putAthleteTrainerNull}

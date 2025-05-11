@@ -2,7 +2,8 @@ import express, {Router, Request, Response} from 'express'
 import bcrypt from 'bcrypt'
 import {postTrainer} from '../helpers/postHelpers'
 import { getTrainers, getTrainer, getTrainerAthletes, getTrainerDrills } from '../helpers/getHelpers'
-import { putTrainer } from '../helpers/putHelpers'
+import { putAthleteTrainerNull, putTrainer } from '../helpers/putHelpers'
+import { deleteTrainerDrills, deleteTrainer } from '../helpers/deleteHelpers'
 const router: Router = express.Router()
 
 //router to post new trainer
@@ -173,6 +174,36 @@ router.put("/:id", async (req: Request, res: Response) => {
         }
         return res.status(500).json({message: "Error updating trainer."})
     }
+})
+
+//router to delete a trainer
+router.delete("/:id", async (req: Request, res: Response) => {
+    
+    //get id from the url
+    const trainer_user_id = parseInt(req.params.id)
+
+    try{
+        //helper to delete drills
+        const delete_trainer_drills = await deleteTrainerDrills(trainer_user_id)
+
+        //update athletes trainer 
+        const update_athlete_trainer_null = await putAthleteTrainerNull(trainer_user_id)
+
+        //delete trainer 
+        const delete_trainer = await deleteTrainer(trainer_user_id)
+
+        //return success status
+        res.status(200).json({message: `Trainer ${trainer_user_id} deleted.`})
+    }catch (error) {
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error deleting trainer."})
+    }
+
 })
 
 //export to use in app

@@ -158,16 +158,16 @@ router.put("/assign_trainer/:id", async (req: Request, res: Response) => {
     
     //getting ids from url and body
     const athlete_user_id = parseInt(req.params.id)
-    const {trainer_id} = req.body
+    const {trainer_user_id} = req.body
 
     //if no id respond error status
-    if(!trainer_id){
+    if(!trainer_user_id){
         return res.status(400).json({message: "Trainer ID required "})
     }
 
     try{
         //call helper function 
-        const updatedAthleteTrainer = await putAthleteTrainer(athlete_user_id, trainer_id)
+        const updatedAthleteTrainer = await putAthleteTrainer(athlete_user_id, trainer_user_id)
 
         //if nothing return respond error
         if(!updatedAthleteTrainer){
