@@ -6,8 +6,13 @@ import {
   getTrainer,
   getTrainerAthletes,
   getTrainerDrills,
+  getTrainerUsernamePassword,
 } from "../helpers/getHelpers";
-import { putAthleteTrainerNull, putTrainer } from "../helpers/putHelpers";
+import {
+  putAthleteTrainerNull,
+  putTrainer,
+  putTrainerPassword,
+} from "../helpers/putHelpers";
 import { deleteTrainerDrills, deleteTrainer } from "../helpers/deleteHelpers";
 import { logError } from "../helpers/logError";
 const router: Router = express.Router();
@@ -204,6 +209,53 @@ router.put("/:id", async (req: Request, res: Response) => {
     //catch if any errors, respond codes and status
     logError(error);
     return res.status(500).json({ message: "Error updating trainer." });
+  }
+});
+
+router.put("/password/:id", async (req: Request, res: Response) => {
+  //get id from the url
+  const trainer_user_id = parseInt(req.params.id);
+  //check if id is a number
+  if (isNaN(trainer_user_id)) {
+    return res.status(400).json({ message: "Please provide valid ID" });
+  }
+
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: "Both current and new passwords are required." });
+  }
+
+  try {
+    const trainer = await getTrainerUsernamePassword(trainer_user_id);
+
+    if (!trainer) {
+      return res.status(404).json({ message: "Trainer not found." });
+    }
+
+    const passwordIsMatch = await bcrypt.compare(
+      currentPassword,
+      trainer.hash_password
+    );
+    if (!passwordIsMatch) {
+      return res
+        .status(401)
+        .json({ message: "Current password is incorrect." });
+    }
+
+    const new_hash_password: string = await bcrypt.hash(newPassword, 10);
+
+    await putTrainerPassword(new_hash_password, trainer_user_id);
+
+    return res.status(200).json({ message: "Password updated successfully." });
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res
+      .status(500)
+      .json({ message: "Error updating trainer password." });
   }
 });
 

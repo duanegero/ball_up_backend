@@ -219,7 +219,7 @@ const postSessionDrill = async (session_id: number, drill_id: number) => {
   }
 };
 
-//help to post trianer login
+//helper to post trianer login
 const postTrainerLoginCredentials = async (username: string) => {
   try {
     //variable to handle prisma query
@@ -239,6 +239,7 @@ const postTrainerLoginCredentials = async (username: string) => {
   }
 };
 
+//helper to post athlete login
 const postAthleteLoginCredentials = async (username: string) => {
   try {
     //varaible to handle prisma query

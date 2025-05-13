@@ -289,6 +289,27 @@ const getTrainerDrills = async (trainer_user_id: number) => {
   }
 };
 
+const getTrainerUsernamePassword = async (trainer_user_id: number) => {
+  try {
+    const trainer = await prisma.trainer.findUnique({
+      where: { trainer_user_id },
+      select: {
+        username: true,
+        hash_password: true,
+      },
+    });
+    return trainer;
+  } catch (error) {
+    //catch if any errors, log and return null
+    if (error instanceof Error) {
+      console.error(error.message, error.stack);
+    } else {
+      console.error("An unknown error occurred", error);
+    }
+    return null;
+  }
+};
+
 export {
   getTrainers,
   getAthletes,
@@ -300,4 +321,5 @@ export {
   getAthleteSessions,
   getTrainerAthletes,
   getTrainerDrills,
+  getTrainerUsernamePassword,
 };
