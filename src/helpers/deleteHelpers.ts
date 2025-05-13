@@ -37,6 +37,7 @@ const deleteTrainer = async (trainer_user_id: number) => {
     }
 }
 
+//helper to delete drill from a session
 const deleteDrillFromSessions = async (drill_id: number) => {
     try{
         return await prisma.session_Drill.deleteMany({
@@ -53,6 +54,7 @@ const deleteDrillFromSessions = async (drill_id: number) => {
     }
 }
 
+//helper to delete a drill
 const deleteDrill = async (drill_id: number) => {
     try{
        return await prisma.drill.delete({
@@ -69,4 +71,41 @@ const deleteDrill = async (drill_id: number) => {
     }
 }
 
-export {deleteTrainerDrills, deleteTrainer, deleteDrillFromSessions, deleteDrill}
+//helper to delete an athletes sessions
+const deleteAthleteSessions = async (athlete_user_id: number) => {
+    try{
+        //prisma query to delete athlete sessions
+        return await prisma.athlete_Session.deleteMany({
+            where: {athlete_user_id}
+        })
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+
+//helper to delete a athlete
+const deleteAthlete = async (athlete_user_id: number) => {
+    try{
+        //prisma query to delete athlete
+        return await prisma.athlete.delete({
+            where: {athlete_user_id}
+        })
+    }catch (error) {
+        //catch if any errors, log and return null
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return null
+    }
+}
+
+//export helpers 
+export {deleteTrainerDrills, deleteTrainer, deleteDrillFromSessions, deleteDrill, deleteAthleteSessions, deleteAthlete}

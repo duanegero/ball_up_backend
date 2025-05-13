@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import { postAthlete, postAthleteSession } from '../helpers/postHelpers'
 import { getAthletes, getAthlete, getAthleteSessions } from '../helpers/getHelpers'
 import { putAthleteTrainer,putAthlete } from '../helpers/putHelpers'
+import { deleteAthleteSessions, deleteAthlete } from '../helpers/deleteHelpers'
 const router: Router = express.Router()
 
 //router to post a new athlete
@@ -214,6 +215,30 @@ router.put("/:id", async (req: Request, res: Response) => {
             console.error("An unknown error occurred", error);
         }
         return res.status(500).json({message: "Error updating athlete."})
+    }
+})
+
+//router to delete a athlete
+router.delete("/:id", async (req: Request, res: Response) => {
+    
+    //get id from url
+    const athlete_user_id = parseInt(req.params.id)
+
+    try{
+        //call helper functions
+        await deleteAthleteSessions(athlete_user_id)
+        await deleteAthlete(athlete_user_id)
+
+        //respond success status 
+        res.status(200).json({message: `Athlete ${athlete_user_id} deleted.`})
+    }catch (error) {
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error deleting athlete."})
     }
 })
 
