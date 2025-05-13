@@ -226,7 +226,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
 
     try{
         //call helper functions
-        await deleteAthleteSessions(athlete_user_id)
+        await deleteAthleteSessions({athlete_user_id})
         await deleteAthlete(athlete_user_id)
 
         //respond success status 

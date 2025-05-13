@@ -88,15 +88,18 @@ router.put("/:id", async (req: Request, res: Response) => {
     }
 })
 
+//router to delete a drill
 router.delete("/:id", async (req: Request, res: Response) => {
     
+    //get the id from url
     const drill_id = parseInt(req.params.id)
 
     try{
+        //call helper functions
         await deleteDrillFromSessions(drill_id)
-
         await deleteDrill(drill_id) 
         
+        //respond success status 
         res.status(200).json({message: `Drill ${drill_id} deleted.`})
     }catch (error) {
         //catch if any errors, respond codes and status 

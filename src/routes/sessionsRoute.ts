@@ -1,6 +1,7 @@
 import express, {Router, Request, Response} from 'express'
 import { postSession, postSessionDrill } from '../helpers/postHelpers'
 import { getSessionDrills, getSessions } from '../helpers/getHelpers'
+import { deleteAthleteSessions, deleteSessionDrills, deleteSession } from '../helpers/deleteHelpers'
 const router: Router = express.Router()
 
 //router to post a session
@@ -113,6 +114,32 @@ router.get("/session_drills/:id", async (req: Request, res: Response) => {
             console.error("An unknown error occurred", error);
         }
         return res.status(500).json({message: "Error fetching session drills."})
+    }
+})
+
+//router to delete a session
+router.delete("/:id", async (req: Request, res: Response) => {
+    
+    //get id from url
+    const session_id = parseInt(req.params.id)
+
+    try{
+        //calls to helper functions 
+        await deleteSessionDrills(session_id)
+        await deleteAthleteSessions({session_id})
+        await deleteSession(session_id)
+
+        //respond success status 
+        res.status(200).json({message: `Session ${session_id} deleted.`})
+
+    }catch (error) {
+        //catch if any errors, respond codes and status 
+        if (error instanceof Error) {
+            console.error(error.message, error.stack);
+        } else {
+            console.error("An unknown error occurred", error);
+        }
+        return res.status(500).json({message: "Error deleting session."})
     }
 })
 
