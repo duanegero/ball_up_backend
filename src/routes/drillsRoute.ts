@@ -3,6 +3,7 @@ import { postDrill } from '../helpers/postHelpers'
 import { getDrills } from '../helpers/getHelpers'
 import { putDrill } from '../helpers/putHelpers'
 import { deleteDrillFromSessions, deleteDrill } from '../helpers/deleteHelpers'
+import { logError } from '../helpers/logError'
 const router: Router = express.Router()
 
 //router to post a new drill
@@ -28,11 +29,7 @@ router.post("/", async (req: Request, res: Response) => {
         return res.status(201).json({message: "Drill created successfully"})
     }catch(error){
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error creating drill."})
     }
 })
@@ -53,12 +50,8 @@ router.get("/", async (req: Request, res: Response) => {
         res.status(200).json(drills)
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
-        return res.status(500).json({message: "Error fetching athletes."})
+        logError(error)
+        return res.status(500).json({message: "Error fetching drills."})
     }
 })
 
@@ -79,11 +72,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error updating athlete."})
     }
 })
@@ -103,11 +92,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
         res.status(200).json({message: `Drill ${drill_id} deleted.`})
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error deleting drill."})
     }
 

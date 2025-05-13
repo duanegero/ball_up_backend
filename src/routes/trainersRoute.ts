@@ -4,6 +4,7 @@ import {postTrainer} from '../helpers/postHelpers'
 import { getTrainers, getTrainer, getTrainerAthletes, getTrainerDrills } from '../helpers/getHelpers'
 import { putAthleteTrainerNull, putTrainer } from '../helpers/putHelpers'
 import { deleteTrainerDrills, deleteTrainer } from '../helpers/deleteHelpers'
+import { logError } from '../helpers/logError'
 const router: Router = express.Router()
 
 //router to post new trainer
@@ -31,11 +32,7 @@ router.post("/", async (req: Request, res: Response) => {
         return res.status(201).json({message: "Trainer created successfully."})
     } catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error creating trainer."})
     }
 })
@@ -55,11 +52,7 @@ router.get("/", async (req: Request, res: Response) => {
         res.status(200).json(trainers)
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error fetching trainers."})
     }
 })
@@ -82,11 +75,7 @@ router.get("/:id", async (req: Request, res: Response) => {
         res.status(200).json(trainer)
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error fetching trainer."})
     }
 })
@@ -111,11 +100,7 @@ router.get("/athletes/:id", async (req: Request, res: Response) => {
 
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error fetching trainers athletes."})
     }
 })
@@ -138,11 +123,7 @@ router.get("/drills/:id", async (req: Request, res: Response) => {
         res.status(200).json(trainer_drills)
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error fetching trainers drills."})
     }
 })
@@ -167,11 +148,7 @@ router.put("/:id", async (req: Request, res: Response) => {
         res.status(200).json(updatedTrainer)
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error updating trainer."})
     }
 })
@@ -196,11 +173,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
         res.status(200).json({message: `Trainer ${trainer_user_id} deleted.`})
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error deleting trainer."})
     }
 

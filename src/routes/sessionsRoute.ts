@@ -2,6 +2,7 @@ import express, {Router, Request, Response} from 'express'
 import { postSession, postSessionDrill } from '../helpers/postHelpers'
 import { getSessionDrills, getSessions } from '../helpers/getHelpers'
 import { deleteAthleteSessions, deleteSessionDrills, deleteSession } from '../helpers/deleteHelpers'
+import { logError } from '../helpers/logError'
 const router: Router = express.Router()
 
 //router to post a session
@@ -10,9 +11,10 @@ router.post("/", async (req: Request, res: Response) => {
     const {length, level} = req.body
 
     //if all fields aren't filled return error
-    if(!length || !level){
-        return res.status(400).json({message: "Please provide all required fields."})   
-    }
+    if (typeof length !== 'number' || typeof level !== 'number') {
+        return res.status(400).json({ message: "Length and level must be numbers." });
+        }
+
 
     try{
         //variable to handle call to helper function with passed in variables 
@@ -27,11 +29,7 @@ router.post("/", async (req: Request, res: Response) => {
         return res.status(201).json({message: "Session created successfully"})
     }catch(error){
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error creating session."})
     }
 })
@@ -56,11 +54,7 @@ router.post("/session_drills/:id", async (req: Request, res: Response) => {
         return res.status(201).json({message: "Session drill created successfully"})
     }catch(error){
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error creating session drill."})
     }
 })
@@ -81,11 +75,7 @@ router.get("/", async (req: Request, res: Response) => {
         res.status(200).json(sessions)
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error fetching sessions."})
     }
 })
@@ -108,11 +98,7 @@ router.get("/session_drills/:id", async (req: Request, res: Response) => {
         res.status(200).json(session_drills)
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error fetching session drills."})
     }
 })
@@ -134,11 +120,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
 
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error deleting session."})
     }
 })

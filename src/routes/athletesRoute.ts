@@ -4,6 +4,7 @@ import { postAthlete, postAthleteSession } from '../helpers/postHelpers'
 import { getAthletes, getAthlete, getAthleteSessions } from '../helpers/getHelpers'
 import { putAthleteTrainer,putAthlete } from '../helpers/putHelpers'
 import { deleteAthleteSessions, deleteAthlete } from '../helpers/deleteHelpers'
+import { logError } from '../helpers/logError'
 const router: Router = express.Router()
 
 //router to post a new athlete
@@ -31,11 +32,7 @@ router.post("/", async (req: Request, res: Response) => {
         return res.status(201).json({message: "Athlete created successfully."})
     }catch(error){
         //catch if any errors, respond codes and status 
-        if(error instanceof Error){
-            console.error(error.message, error.stack)
-        }else{
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error creating athlete"})
     }
 })
@@ -65,11 +62,7 @@ router.post("/athlete_sessions/:id", async (req:Request, res: Response) => {
         return res.status(201).json({message: "Athlete session created successfully"})
     }catch(error){
         //catch if any errors, respond codes and status 
-        if(error instanceof Error){
-            console.error(error.message, error.stack)
-        }else{
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error creating athlete session"})
     }
 })
@@ -89,11 +82,7 @@ router.get("/", async (req: Request, res: Response) => {
         res.status(200).json(athletes)
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error fetching athletes."})
     }
 })
@@ -117,11 +106,7 @@ router.get("/:id", async (req: Request, res: Response) => {
         res.status(200).json(athlete)
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error fetching athlete."})
     }
 })
@@ -145,11 +130,7 @@ router.get("/athlete_sessions/:id", async (req: Request, res: Response) => {
         res.status(200).json(athlete_sessions)
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error fetching athletes sessions."})
     }
 })
@@ -179,11 +160,7 @@ router.put("/assign_trainer/:id", async (req: Request, res: Response) => {
         res.status(200).json(updatedAthleteTrainer)
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error updating athlete trainer."})
     }
 })
@@ -209,11 +186,7 @@ router.put("/:id", async (req: Request, res: Response) => {
         res.status(200).json(updatedAthlete)
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error updating athlete."})
     }
 })
@@ -233,11 +206,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
         res.status(200).json({message: `Athlete ${athlete_user_id} deleted.`})
     }catch (error) {
         //catch if any errors, respond codes and status 
-        if (error instanceof Error) {
-            console.error(error.message, error.stack);
-        } else {
-            console.error("An unknown error occurred", error);
-        }
+        logError(error)
         return res.status(500).json({message: "Error deleting athlete."})
     }
 })
