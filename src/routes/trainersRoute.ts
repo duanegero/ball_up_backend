@@ -1,185 +1,240 @@
-import express, {Router, Request, Response} from 'express'
-import bcrypt from 'bcrypt'
-import {postTrainer} from '../helpers/postHelpers'
-import { getTrainers, getTrainer, getTrainerAthletes, getTrainerDrills } from '../helpers/getHelpers'
-import { putAthleteTrainerNull, putTrainer } from '../helpers/putHelpers'
-import { deleteTrainerDrills, deleteTrainer } from '../helpers/deleteHelpers'
-import { logError } from '../helpers/logError'
-const router: Router = express.Router()
+import express, { Router, Request, Response } from "express";
+import bcrypt from "bcrypt";
+import { postTrainer } from "../helpers/postHelpers";
+import {
+  getTrainers,
+  getTrainer,
+  getTrainerAthletes,
+  getTrainerDrills,
+} from "../helpers/getHelpers";
+import { putAthleteTrainerNull, putTrainer } from "../helpers/putHelpers";
+import { deleteTrainerDrills, deleteTrainer } from "../helpers/deleteHelpers";
+import { logError } from "../helpers/logError";
+const router: Router = express.Router();
 
 //router to post new trainer
 router.post("/", async (req: Request, res: Response) => {
-    //getting the info from the request body
-    const {email, username, password, first_name, last_name, years_experience, bio} = req.body
+  //getting the info from the request body
+  const {
+    email,
+    username,
+    password,
+    first_name,
+    last_name,
+    years_experience,
+    bio,
+  } = req.body;
 
-    //if all fields aren't filled return error 
-    if(!email || !username || !password || !first_name || !last_name || !years_experience || !bio) {
-        return res.status(400).json({message: "Please provide all required fields."})
+  //if all fields aren't filled return error
+  if (
+    !email ||
+    !username ||
+    !password ||
+    !first_name ||
+    !last_name ||
+    years_experience === undefined ||
+    bio === undefined
+  ) {
+    return res
+      .status(400)
+      .json({ message: "Please provide all required fields." });
+  }
+
+  try {
+    //hashing the password
+    const hash_password: string = await bcrypt.hash(password, 10);
+
+    //variable to handle call to helper function with passed in variables
+    const newTrainer = await postTrainer(
+      email,
+      username,
+      hash_password,
+      first_name,
+      last_name,
+      years_experience,
+      bio
+    );
+
+    //if nothing returned, respond error status and message
+    if (!newTrainer) {
+      return res.status(500).json({ message: "Error creating trainer." });
     }
+    //return success status and code
+    return res.status(201).json({ message: "Trainer created successfully." });
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res.status(500).json({ message: "Error creating trainer." });
+  }
+});
 
-    try {
-        //hashing the password 
-        const hash_password: string = await bcrypt.hash(password, 10)
-
-        //variable to handle call to helper function with passed in variables 
-        const newTrainer = await postTrainer(email, username, hash_password, first_name, last_name, years_experience, bio)
-        
-        //if nothing returned, respond error status and message
-        if(!newTrainer) {
-            return res.status(500).json({message: "Error creating trainer."})
-        }
-        //return success status and code 
-        return res.status(201).json({message: "Trainer created successfully."})
-    } catch (error) {
-        //catch if any errors, respond codes and status 
-        logError(error)
-        return res.status(500).json({message: "Error creating trainer."})
-    }
-})
-
-//router to get all trainers 
+//router to get all trainers
 router.get("/", async (req: Request, res: Response) => {
-    
-    try{
-        //call helper function
-        const trainers = await getTrainers()
+  try {
+    //call helper function
+    const trainers = await getTrainers();
 
-        //if nothing returned respond error status
-        if(!trainers){
-            return res.status(500).json({message: "Error fetching trainers."})
-        }
-        //respond success status
-        res.status(200).json(trainers)
-    }catch (error) {
-        //catch if any errors, respond codes and status 
-        logError(error)
-        return res.status(500).json({message: "Error fetching trainers."})
+    //if nothing returned respond error status
+    if (!trainers) {
+      return res.status(500).json({ message: "Error fetching trainers." });
     }
-})
+    //respond success status
+    res.status(200).json(trainers);
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res.status(500).json({ message: "Error fetching trainers." });
+  }
+});
 
 //router to get a trainer by id
 router.get("/:id", async (req: Request, res: Response) => {
-    //parse id from url
-    const trainer_user_id = parseInt(req.params.id)
+  //parse id from url
+  const trainer_user_id = parseInt(req.params.id);
 
-    try{
-        //call to helper function
-        const trainer = await getTrainer(trainer_user_id)
+  //check if id is a number
+  if (isNaN(trainer_user_id)) {
+    return res.status(400).json({ message: "Please provide valid ID" });
+  }
 
-        //if nothing return return error status
-        if(!trainer){
-            return res.status(500).json({message: "Error fetching trainer."})
-        }
+  try {
+    //call to helper function
+    const trainer = await getTrainer(trainer_user_id);
 
-        //return success status and json
-        res.status(200).json(trainer)
-    }catch (error) {
-        //catch if any errors, respond codes and status 
-        logError(error)
-        return res.status(500).json({message: "Error fetching trainer."})
+    //if nothing return return error status
+    if (!trainer) {
+      return res.status(404).json({ message: "Trainer not found." });
     }
-})
+
+    //return success status and json
+    res.status(200).json(trainer);
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res.status(500).json({ message: "Error fetching trainer." });
+  }
+});
 
 //router to get trainers athletes
 router.get("/athletes/:id", async (req: Request, res: Response) => {
-    
-    //getting id from url
-    const trainer_user_id = parseInt(req.params.id)
+  //getting id from url
+  const trainer_user_id = parseInt(req.params.id);
 
-    try{
-        //call to helper function
-        const trainer_athletes = await getTrainerAthletes(trainer_user_id)
+  //check if id is a number
+  if (isNaN(trainer_user_id)) {
+    return res.status(400).json({ message: "Please provide valid ID" });
+  }
 
-        //if nothing return respond error status
-        if(!trainer_athletes){
-            return res.status(500).json({message: "Error fetching trainers athletes."})
-        }
+  try {
+    //call to helper function
+    const trainer_athletes = await getTrainerAthletes(trainer_user_id);
 
-        //return success status 
-        res.status(200).json(trainer_athletes)
-
-    }catch (error) {
-        //catch if any errors, respond codes and status 
-        logError(error)
-        return res.status(500).json({message: "Error fetching trainers athletes."})
+    //if nothing return respond error status
+    if (!trainer_athletes) {
+      return res
+        .status(500)
+        .json({ message: "Error fetching trainers athletes." });
     }
-})
+
+    //return success status
+    res.status(200).json(trainer_athletes);
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res
+      .status(500)
+      .json({ message: "Error fetching trainers athletes." });
+  }
+});
 
 //router to get all trainers drills
 router.get("/drills/:id", async (req: Request, res: Response) => {
-    
-    //getting id from url
-    const trainer_user_id = parseInt(req.params.id)
+  //getting id from url
+  const trainer_user_id = parseInt(req.params.id);
 
-    try{
-        //call to helper function
-        const trainer_drills = await getTrainerDrills(trainer_user_id)
+  //check if id is a number
+  if (isNaN(trainer_user_id)) {
+    return res.status(400).json({ message: "Please provide valid ID" });
+  }
 
-        //if nothing return respond error status
-        if(!trainer_drills){
-            return res.status(500).json({message: "Error fetching trainers drills."})
-        }
+  try {
+    //call to helper function
+    const trainer_drills = await getTrainerDrills(trainer_user_id);
 
-        res.status(200).json(trainer_drills)
-    }catch (error) {
-        //catch if any errors, respond codes and status 
-        logError(error)
-        return res.status(500).json({message: "Error fetching trainers drills."})
+    //if nothing return respond error status
+    if (!trainer_drills) {
+      return res
+        .status(500)
+        .json({ message: "Error fetching trainers drills." });
     }
-})
 
-//router to put a trainer 
+    res.status(200).json(trainer_drills);
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res.status(500).json({ message: "Error fetching trainers drills." });
+  }
+});
+
+//router to put a trainer
 router.put("/:id", async (req: Request, res: Response) => {
-    //get id from the url
-    const trainer_user_id = parseInt(req.params.id)
-    //get the updates from body
-    const updatedFields = req.body
+  //get id from the url
+  const trainer_user_id = parseInt(req.params.id);
 
-    try{
-        //call to helper function
-        const updatedTrainer = await putTrainer(trainer_user_id, updatedFields)
+  //check if id is a number
+  if (isNaN(trainer_user_id)) {
+    return res.status(400).json({ message: "Please provide valid ID" });
+  }
 
-        //if nothing returned respond error status
-        if(!updatedTrainer){
-            return res.status(404).json({message: "Error updating trainer."})
-        }
+  //get the updates from body
+  const updatedFields = req.body;
 
-        //respond success status 
-        res.status(200).json(updatedTrainer)
-    }catch (error) {
-        //catch if any errors, respond codes and status 
-        logError(error)
-        return res.status(500).json({message: "Error updating trainer."})
+  try {
+    //call to helper function
+    const updatedTrainer = await putTrainer(trainer_user_id, updatedFields);
+
+    //if nothing returned respond error status
+    if (!updatedTrainer) {
+      return res.status(404).json({ message: "Error updating trainer." });
     }
-})
+
+    //respond success status
+    res.status(200).json(updatedTrainer);
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res.status(500).json({ message: "Error updating trainer." });
+  }
+});
 
 //router to delete a trainer
 router.delete("/:id", async (req: Request, res: Response) => {
-    
-    //get id from the url
-    const trainer_user_id = parseInt(req.params.id)
+  //get id from the url
+  const trainer_user_id = parseInt(req.params.id);
 
-    try{
-        //helper to delete drills
-        await deleteTrainerDrills(trainer_user_id)
+  //check if id is a number
+  if (isNaN(trainer_user_id)) {
+    return res.status(400).json({ message: "Please provide valid ID" });
+  }
 
-        //update athletes trainer 
-        await putAthleteTrainerNull(trainer_user_id)
+  try {
+    //helper to delete drills
+    await deleteTrainerDrills(trainer_user_id);
 
-        //delete trainer 
-        await deleteTrainer(trainer_user_id)
+    //update athletes trainer
+    await putAthleteTrainerNull(trainer_user_id);
 
-        //return success status
-        res.status(200).json({message: `Trainer ${trainer_user_id} deleted.`})
-    }catch (error) {
-        //catch if any errors, respond codes and status 
-        logError(error)
-        return res.status(500).json({message: "Error deleting trainer."})
-    }
+    //delete trainer
+    await deleteTrainer(trainer_user_id);
 
-})
+    //return success status
+    res.status(200).json({ message: `Trainer ${trainer_user_id} deleted.` });
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res.status(500).json({ message: "Error deleting trainer." });
+  }
+});
 
 //export to use in app
-export {router as trainersRoute}
-
-
+export { router as trainersRoute };
