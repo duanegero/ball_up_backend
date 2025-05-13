@@ -212,6 +212,7 @@ router.put("/:id", async (req: Request, res: Response) => {
   }
 });
 
+//router to put a trainer password
 router.put("/password/:id", async (req: Request, res: Response) => {
   //get id from the url
   const trainer_user_id = parseInt(req.params.id);
@@ -220,8 +221,10 @@ router.put("/password/:id", async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Please provide valid ID" });
   }
 
+  //get the old and new password
   const { currentPassword, newPassword } = req.body;
 
+  //if nothing in the body respond error status
   if (!currentPassword || !newPassword) {
     return res
       .status(400)
@@ -229,26 +232,33 @@ router.put("/password/:id", async (req: Request, res: Response) => {
   }
 
   try {
+    //varible to check for trainer
     const trainer = await getTrainerUsernamePassword(trainer_user_id);
 
+    //if nothing found respond error status
     if (!trainer) {
       return res.status(404).json({ message: "Trainer not found." });
     }
 
+    //check if old password match
     const passwordIsMatch = await bcrypt.compare(
       currentPassword,
       trainer.hash_password
     );
+    //if no match respond error status
     if (!passwordIsMatch) {
       return res
         .status(401)
         .json({ message: "Current password is incorrect." });
     }
 
+    //hash the new password
     const new_hash_password: string = await bcrypt.hash(newPassword, 10);
 
+    //update password in db
     await putTrainerPassword(new_hash_password, trainer_user_id);
 
+    //respond success status
     return res.status(200).json({ message: "Password updated successfully." });
   } catch (error) {
     //catch if any errors, respond codes and status

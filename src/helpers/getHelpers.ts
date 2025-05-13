@@ -289,8 +289,10 @@ const getTrainerDrills = async (trainer_user_id: number) => {
   }
 };
 
+//helper to get trainer username and password
 const getTrainerUsernamePassword = async (trainer_user_id: number) => {
   try {
+    //variable to handle prisma query
     const trainer = await prisma.trainer.findUnique({
       where: { trainer_user_id },
       select: {
@@ -298,7 +300,32 @@ const getTrainerUsernamePassword = async (trainer_user_id: number) => {
         hash_password: true,
       },
     });
+    //return results
     return trainer;
+  } catch (error) {
+    //catch if any errors, log and return null
+    if (error instanceof Error) {
+      console.error(error.message, error.stack);
+    } else {
+      console.error("An unknown error occurred", error);
+    }
+    return null;
+  }
+};
+
+//helper to get athlete username and password
+const getAthleteUsernamePassword = async (athlete_user_id: number) => {
+  try {
+    //variable to handle prisma query
+    const athlete = await prisma.athlete.findUnique({
+      where: { athlete_user_id },
+      select: {
+        username: true,
+        hash_password: true,
+      },
+    });
+    //return results
+    return athlete;
   } catch (error) {
     //catch if any errors, log and return null
     if (error instanceof Error) {
@@ -322,4 +349,5 @@ export {
   getTrainerAthletes,
   getTrainerDrills,
   getTrainerUsernamePassword,
+  getAthleteUsernamePassword,
 };

@@ -217,18 +217,45 @@ const putAthleteTrainerNull = async (trainer_user_id: number) => {
   }
 };
 
+//helper to put trainer password
 const putTrainerPassword = async (
   new_hash_password: string,
   trainer_user_id: number
 ): Promise<boolean> => {
   try {
+    //prisma query to update password
     await prisma.trainer.update({
       where: { trainer_user_id },
       data: { hash_password: new_hash_password },
     });
+    //return true if success
     return true;
   } catch (error) {
-    //catch if any errors, log and return null
+    //catch if any errors, log and return false
+    if (error instanceof Error) {
+      console.error(error.message, error.stack);
+    } else {
+      console.error("An unknown error occurred", error);
+    }
+    return false;
+  }
+};
+
+//helper to put athlete password
+const putAthletePassword = async (
+  new_hash_password: string,
+  athlete_user_id: number
+): Promise<boolean> => {
+  try {
+    //prisma query to update password
+    await prisma.athlete.update({
+      where: { athlete_user_id },
+      data: { hash_password: new_hash_password },
+    });
+    //return true
+    return true;
+  } catch (error) {
+    //catch if any errors, log and return false
     if (error instanceof Error) {
       console.error(error.message, error.stack);
     } else {
@@ -245,4 +272,5 @@ export {
   putDrill,
   putAthleteTrainerNull,
   putTrainerPassword,
+  putAthletePassword,
 };
