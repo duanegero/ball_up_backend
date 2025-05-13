@@ -238,6 +238,25 @@ const postTrainerLoginCredentials = async (username: string) => {
     return null;
   }
 };
+
+const postAthleteLoginCredentials = async (username: string) => {
+  try {
+    //varaible to handle prisma query
+    const athlete = await prisma.athlete.findUnique({
+      where: { username },
+    });
+    //return results
+    return athlete;
+  } catch (error) {
+    //catch if any errors, log and return null
+    if (error instanceof Error) {
+      console.error(error.message, error.stack);
+    } else {
+      console.error("An unknown error occurred", error);
+    }
+    return null;
+  }
+};
 export {
   postTrainer,
   postAthlete,
@@ -246,4 +265,5 @@ export {
   postAthleteSession,
   postSessionDrill,
   postTrainerLoginCredentials,
+  postAthleteLoginCredentials,
 };

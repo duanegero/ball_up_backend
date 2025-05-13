@@ -6,6 +6,7 @@ import { athletesRoute } from "./routes/athletesRoute";
 import { drillsRoute } from "./routes/drillsRoute";
 import { sessionsRoute } from "./routes/sessionsRoute";
 import { trainerLoginRoute } from "./routes/trainerLoginRoute";
+import { athleteLoginRoute } from "./routes/athleteLoginRoute";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use("/athletes", athletesRoute);
 app.use("/drills", drillsRoute);
 app.use("/sessions", sessionsRoute);
 app.use("/trainer_login", trainerLoginRoute);
+app.use("/athlete_login", athleteLoginRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Ball Up API");
