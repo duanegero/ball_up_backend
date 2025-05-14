@@ -14,6 +14,7 @@ import {
 } from "../helpers/putHelpers";
 import { deleteAthleteSessions, deleteAthlete } from "../helpers/deleteHelpers";
 import { logError } from "../helpers/logError";
+import { trainerVerifyToken } from "../middleware/trainerVerifyToken";
 const router: Router = express.Router();
 
 //router to post a new athlete
@@ -68,44 +69,50 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 //router to post a new athlete session
-router.post("/athlete_sessions/:id", async (req: Request, res: Response) => {
-  const session_id = parseInt(req.params.id);
-  //getting the info from the request body
-  const { athlete_user_id } = req.body;
+router.post(
+  "/athlete_sessions/:id",
+  trainerVerifyToken,
+  async (req: Request, res: Response) => {
+    const session_id = parseInt(req.params.id);
+    //getting the info from the request body
+    const { athlete_user_id } = req.body;
 
-  //check id's are numbers
-  if (isNaN(session_id) || !athlete_user_id) {
-    return res.status(400).json({ message: "Please provide valid ID" });
-  }
+    //check id's are numbers
+    if (isNaN(session_id) || !athlete_user_id) {
+      return res.status(400).json({ message: "Please provide valid ID" });
+    }
 
-  try {
-    //variable to handle call to helper function with passed in variables
-    const newAthleteSession = await postAthleteSession(
-      athlete_user_id,
-      session_id
-    );
+    try {
+      //variable to handle call to helper function with passed in variables
+      const newAthleteSession = await postAthleteSession(
+        athlete_user_id,
+        session_id
+      );
 
-    //if nothing returned, respond error status and message
-    if (!newAthleteSession) {
+      //if nothing returned, respond error status and message
+      if (!newAthleteSession) {
+        return res
+          .status(500)
+          .json({ message: "Error creating athlete session" });
+      }
+
+      //return success status and code
+      return res.status(201).json({
+        message: "Athlete session created successfully",
+        newAthleteSession,
+      });
+    } catch (error) {
+      //catch if any errors, respond codes and status
+      logError(error);
       return res
         .status(500)
         .json({ message: "Error creating athlete session" });
     }
-
-    //return success status and code
-    return res.status(201).json({
-      message: "Athlete session created successfully",
-      newAthleteSession,
-    });
-  } catch (error) {
-    //catch if any errors, respond codes and status
-    logError(error);
-    return res.status(500).json({ message: "Error creating athlete session" });
   }
-});
+);
 
 //router to get all athletes
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", trainerVerifyToken, async (req: Request, res: Response) => {
   try {
     //call helper function
     const athletes = await getAthletes();
@@ -124,7 +131,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 //router to get a single athlete by id
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", trainerVerifyToken, async (req: Request, res: Response) => {
   //parse id from url
   const athlete_user_id = parseInt(req.params.id);
 

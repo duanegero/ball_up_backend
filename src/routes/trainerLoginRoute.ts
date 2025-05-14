@@ -48,7 +48,10 @@ router.post("/", async (req: Request, res: Response) => {
     //variable to handle id
     const trainer_user_id = trainer.trainer_user_id;
     //variable to handle payload
-    const payload = { trainer_user_id: trainer_user_id };
+    const payload = {
+      trainer_user_id: trainer_user_id,
+      username: trainer.username,
+    };
 
     //creating a token with jwt
     const token = jwt.sign(payload, apiKey, { expiresIn: "1h" });

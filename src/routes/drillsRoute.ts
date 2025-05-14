@@ -4,10 +4,11 @@ import { getDrills } from "../helpers/getHelpers";
 import { putDrill } from "../helpers/putHelpers";
 import { deleteDrillFromSessions, deleteDrill } from "../helpers/deleteHelpers";
 import { logError } from "../helpers/logError";
+import { trainerVerifyToken } from "../middleware/trainerVerifyToken";
 const router: Router = express.Router();
 
 //router to post a new drill
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", trainerVerifyToken, async (req: Request, res: Response) => {
   //getting the info from the request body
   const { drill_type, description, level, trainer_user_id } = req.body;
 
@@ -49,7 +50,7 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 //router to get all drills
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", trainerVerifyToken, async (req: Request, res: Response) => {
   try {
     //call helper function
     const drills = await getDrills();
@@ -69,7 +70,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 //router to put a drill
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", trainerVerifyToken, async (req: Request, res: Response) => {
   //get id from url
   const drill_id = parseInt(req.params.id);
 
@@ -100,28 +101,32 @@ router.put("/:id", async (req: Request, res: Response) => {
 });
 
 //router to delete a drill
-router.delete("/:id", async (req: Request, res: Response) => {
-  //get the id from url
-  const drill_id = parseInt(req.params.id);
+router.delete(
+  "/:id",
+  trainerVerifyToken,
+  async (req: Request, res: Response) => {
+    //get the id from url
+    const drill_id = parseInt(req.params.id);
 
-  //check if id is a number
-  if (isNaN(drill_id)) {
-    return res.status(400).json({ message: "Invalid drill ID." });
+    //check if id is a number
+    if (isNaN(drill_id)) {
+      return res.status(400).json({ message: "Invalid drill ID." });
+    }
+
+    try {
+      //call helper functions
+      await deleteDrillFromSessions(drill_id);
+      await deleteDrill(drill_id);
+
+      //respond success status
+      res.status(200).json({ message: `Drill ${drill_id} deleted.` });
+    } catch (error) {
+      //catch if any errors, respond codes and status
+      logError(error);
+      return res.status(500).json({ message: "Error deleting drill." });
+    }
   }
-
-  try {
-    //call helper functions
-    await deleteDrillFromSessions(drill_id);
-    await deleteDrill(drill_id);
-
-    //respond success status
-    res.status(200).json({ message: `Drill ${drill_id} deleted.` });
-  } catch (error) {
-    //catch if any errors, respond codes and status
-    logError(error);
-    return res.status(500).json({ message: "Error deleting drill." });
-  }
-});
+);
 
 //export to use in app
 export { router as drillsRoute };
