@@ -133,7 +133,7 @@ router.get("/", trainerVerifyToken, async (req: Request, res: Response) => {
 });
 
 //router to get a single athlete by id
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", athleteVerifyToken, async (req: Request, res: Response) => {
   //parse id from url
   const athlete_user_id = parseInt(req.params.id);
 
