@@ -15,6 +15,8 @@ import {
 import { deleteAthleteSessions, deleteAthlete } from "../helpers/deleteHelpers";
 import { logError } from "../helpers/logError";
 import { trainerVerifyToken } from "../middleware/trainerVerifyToken";
+import { athleteVerifyToken } from "../middleware/athleteVerifyToken";
+
 const router: Router = express.Router();
 
 //router to post a new athlete
@@ -131,7 +133,7 @@ router.get("/", trainerVerifyToken, async (req: Request, res: Response) => {
 });
 
 //router to get a single athlete by id
-router.get("/:id", trainerVerifyToken, async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   //parse id from url
   const athlete_user_id = parseInt(req.params.id);
 
@@ -159,80 +161,90 @@ router.get("/:id", trainerVerifyToken, async (req: Request, res: Response) => {
 });
 
 //router to get all athletes sessions
-router.get("/athlete_sessions/:id", async (req: Request, res: Response) => {
-  //parse id from url
-  const athlete_user_id = parseInt(req.params.id);
+router.get(
+  "/athlete_sessions/:id",
+  athleteVerifyToken,
+  async (req: Request, res: Response) => {
+    //parse id from url
+    const athlete_user_id = parseInt(req.params.id);
 
-  //check if id is a number
-  if (isNaN(athlete_user_id)) {
-    return res.status(400).json({ message: "Please provide valid ID" });
-  }
+    //check if id is a number
+    if (isNaN(athlete_user_id)) {
+      return res.status(400).json({ message: "Please provide valid ID" });
+    }
 
-  try {
-    //call to helper function
-    const athlete_sessions = await getAthleteSessions(athlete_user_id);
+    try {
+      //call to helper function
+      const athlete_sessions = await getAthleteSessions(athlete_user_id);
 
-    //if nothing returned respond error status
-    if (!athlete_sessions) {
+      //if nothing returned respond error status
+      if (!athlete_sessions) {
+        return res
+          .status(500)
+          .json({ message: "Error fetching athletes sessions." });
+      }
+
+      //respond ok statas and json
+      res.status(200).json({ message: "Athlete sessions", athlete_sessions });
+    } catch (error) {
+      //catch if any errors, respond codes and status
+      logError(error);
       return res
         .status(500)
         .json({ message: "Error fetching athletes sessions." });
     }
-
-    //respond ok statas and json
-    res.status(200).json({ message: "Athlete sessions", athlete_sessions });
-  } catch (error) {
-    //catch if any errors, respond codes and status
-    logError(error);
-    return res
-      .status(500)
-      .json({ message: "Error fetching athletes sessions." });
   }
-});
+);
 
 //router to post a trainer to an athlete
-router.put("/assign_trainer/:id", async (req: Request, res: Response) => {
-  //getting ids from url and body
-  const athlete_user_id = parseInt(req.params.id);
-  const { trainer_user_id } = req.body;
+router.put(
+  "/assign_trainer/:id",
+  athleteVerifyToken,
+  async (req: Request, res: Response) => {
+    //getting ids from url and body
+    const athlete_user_id = parseInt(req.params.id);
+    const { trainer_user_id } = req.body;
 
-  //check if id is a number
-  if (isNaN(athlete_user_id)) {
-    return res.status(400).json({ message: "Please provide valid ID" });
-  }
+    //check if id is a number
+    if (isNaN(athlete_user_id)) {
+      return res.status(400).json({ message: "Please provide valid ID" });
+    }
 
-  //if no id respond error status
-  if (!trainer_user_id) {
-    return res.status(400).json({ message: "Trainer ID required " });
-  }
+    //if no id respond error status
+    if (!trainer_user_id) {
+      return res.status(400).json({ message: "Trainer ID required " });
+    }
 
-  try {
-    //call helper function
-    const updatedAthleteTrainer = await putAthleteTrainer(
-      athlete_user_id,
-      trainer_user_id
-    );
+    try {
+      //call helper function
+      const updatedAthleteTrainer = await putAthleteTrainer(
+        athlete_user_id,
+        trainer_user_id
+      );
 
-    //if nothing return respond error
-    if (!updatedAthleteTrainer) {
+      //if nothing return respond error
+      if (!updatedAthleteTrainer) {
+        return res
+          .status(500)
+          .json({ message: "Error updating athlete trainer." });
+      }
+
+      //respond success status and json
+      res
+        .status(200)
+        .json({ message: "Updated athlete trainer.", updatedAthleteTrainer });
+    } catch (error) {
+      //catch if any errors, respond codes and status
+      logError(error);
       return res
         .status(500)
         .json({ message: "Error updating athlete trainer." });
     }
-
-    //respond success status and json
-    res
-      .status(200)
-      .json({ message: "Updated athlete trainer.", updatedAthleteTrainer });
-  } catch (error) {
-    //catch if any errors, respond codes and status
-    logError(error);
-    return res.status(500).json({ message: "Error updating athlete trainer." });
   }
-});
+);
 
 //router to put a athlete
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", athleteVerifyToken, async (req: Request, res: Response) => {
   //get id from the url
   const athlete_user_id = parseInt(req.params.id);
 
@@ -263,84 +275,94 @@ router.put("/:id", async (req: Request, res: Response) => {
 });
 
 //router to put athlete password
-router.put("/password/:id", async (req: Request, res: Response) => {
-  //get id from url
-  const athlete_user_id = parseInt(req.params.id);
+router.put(
+  "/password/:id",
+  athleteVerifyToken,
+  async (req: Request, res: Response) => {
+    //get id from url
+    const athlete_user_id = parseInt(req.params.id);
 
-  //check if id is a number
-  if (isNaN(athlete_user_id)) {
-    return res.status(400).json({ message: "Please provide valid ID" });
-  }
-
-  //get the old and new password
-  const { currentPassword, newPassword } = req.body;
-  //if nothing in the body respond error status
-  if (!currentPassword || !newPassword) {
-    return res
-      .status(400)
-      .json({ message: "Both current and new passwords are required." });
-  }
-
-  try {
-    //variable to handle helper call
-    const athlete = await getAthleteUsernamePassword(athlete_user_id);
-
-    //if nothing returned respond error status
-    if (!athlete) {
-      return res.status(404).json({ message: "Athlete not found." });
+    //check if id is a number
+    if (isNaN(athlete_user_id)) {
+      return res.status(400).json({ message: "Please provide valid ID" });
     }
 
-    //check if old password match
-    const passwordIsMatch = await bcrypt.compare(
-      currentPassword,
-      athlete.hash_password
-    );
-    //if no match respond error status
-    if (!passwordIsMatch) {
+    //get the old and new password
+    const { currentPassword, newPassword } = req.body;
+    //if nothing in the body respond error status
+    if (!currentPassword || !newPassword) {
       return res
-        .status(401)
-        .json({ message: "Current password is incorrect." });
+        .status(400)
+        .json({ message: "Both current and new passwords are required." });
     }
 
-    //hash the new password
-    const new_hash_password: string = await bcrypt.hash(newPassword, 10);
+    try {
+      //variable to handle helper call
+      const athlete = await getAthleteUsernamePassword(athlete_user_id);
 
-    //call helper function
-    await putAthletePassword(new_hash_password, athlete_user_id);
+      //if nothing returned respond error status
+      if (!athlete) {
+        return res.status(404).json({ message: "Athlete not found." });
+      }
 
-    //respond success status
-    return res.status(200).json({ message: "Password updated successfully." });
-  } catch (error) {
-    //catch if any errors, respond codes and status
-    logError(error);
-    return res
-      .status(500)
-      .json({ message: "Error updating athlete password." });
+      //check if old password match
+      const passwordIsMatch = await bcrypt.compare(
+        currentPassword,
+        athlete.hash_password
+      );
+      //if no match respond error status
+      if (!passwordIsMatch) {
+        return res
+          .status(401)
+          .json({ message: "Current password is incorrect." });
+      }
+
+      //hash the new password
+      const new_hash_password: string = await bcrypt.hash(newPassword, 10);
+
+      //call helper function
+      await putAthletePassword(new_hash_password, athlete_user_id);
+
+      //respond success status
+      return res
+        .status(200)
+        .json({ message: "Password updated successfully." });
+    } catch (error) {
+      //catch if any errors, respond codes and status
+      logError(error);
+      return res
+        .status(500)
+        .json({ message: "Error updating athlete password." });
+    }
   }
-});
+);
 
 //router to delete a athlete
-router.delete("/:id", async (req: Request, res: Response) => {
-  //get id from url
-  const athlete_user_id = parseInt(req.params.id);
+router.delete(
+  "/:id",
+  athleteVerifyToken,
+  async (req: Request, res: Response) => {
+    //get id from url
+    const athlete_user_id = parseInt(req.params.id);
 
-  //check if id is a number
-  if (isNaN(athlete_user_id)) {
-    return res.status(400).json({ message: "Please provide valid ID" });
+    //check if id is a number
+    if (isNaN(athlete_user_id)) {
+      return res.status(400).json({ message: "Please provide valid ID" });
+    }
+
+    try {
+      //call helper functions
+      await deleteAthleteSessions({ athlete_user_id });
+      await deleteAthlete(athlete_user_id);
+
+      //respond success status
+      res.status(200).json({ message: `Athlete ${athlete_user_id} deleted.` });
+    } catch (error) {
+      //catch if any errors, respond codes and status
+      logError(error);
+      return res.status(500).json({ message: "Error deleting athlete." });
+    }
   }
-
-  try {
-    //call helper functions
-    await deleteAthleteSessions({ athlete_user_id });
-    await deleteAthlete(athlete_user_id);
-
-    //respond success status
-    res.status(200).json({ message: `Athlete ${athlete_user_id} deleted.` });
-  } catch (error) {
-    //catch if any errors, respond codes and status
-    logError(error);
-    return res.status(500).json({ message: "Error deleting athlete." });
-  }
-});
+);
 
 export { router as athletesRoute };

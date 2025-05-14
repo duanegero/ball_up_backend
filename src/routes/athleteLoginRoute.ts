@@ -48,7 +48,10 @@ router.post("/", async (req: Request, res: Response) => {
     const athlete_user_id = athlete.athlete_user_id;
 
     //variable to handle payload
-    const payload = { athlete_user_id: athlete_user_id };
+    const payload = {
+      athlete_user_id: athlete_user_id,
+      username: athlete.username,
+    };
 
     //making a token
     const token = jwt.sign(payload, apiKey, { expiresIn: "1h" });

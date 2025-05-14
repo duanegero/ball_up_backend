@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { TrainerPayload } from "../helpers/types";
+import { AthletePayload } from "../helpers/types";
 const apiKey = process.env.API_KEY;
 
 //check for api key
@@ -8,13 +8,13 @@ if (!apiKey) {
   throw new Error("API_KEY is not set in environment variables.");
 }
 
-//extend request to include trainer property
+//extend request to include athlete property
 export interface AuthenticatedRequest extends Request {
-  trainer?: TrainerPayload; //contains the trainer info
+  athlete?: AthletePayload;
 }
 
-//fuction to verify the trainer
-const trainerVerifyToken = (
+//function to verify the athlete
+const athleteVerifyToken = (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
@@ -37,10 +37,10 @@ const trainerVerifyToken = (
 
   try {
     //verify token, cast payload
-    const decoded = jwt.verify(token, apiKey) as TrainerPayload;
+    const decoded = jwt.verify(token, apiKey) as AthletePayload;
 
     //attach to request object
-    req.trainer = decoded;
+    req.athlete = decoded;
 
     next();
   } catch (error: any) {
@@ -55,4 +55,4 @@ const trainerVerifyToken = (
   }
 };
 
-export { trainerVerifyToken };
+export { athleteVerifyToken };

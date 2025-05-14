@@ -15,6 +15,7 @@ import {
 } from "../helpers/putHelpers";
 import { deleteTrainerDrills, deleteTrainer } from "../helpers/deleteHelpers";
 import { logError } from "../helpers/logError";
+import { athleteVerifyToken } from "../middleware/athleteVerifyToken";
 const router: Router = express.Router();
 
 //router to post new trainer

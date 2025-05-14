@@ -8,6 +8,7 @@ import {
 } from "../helpers/deleteHelpers";
 import { logError } from "../helpers/logError";
 import { trainerVerifyToken } from "../middleware/trainerVerifyToken";
+import { athleteVerifyToken } from "../middleware/athleteVerifyToken";
 const router: Router = express.Router();
 
 //router to post a session
@@ -81,7 +82,7 @@ router.post(
 );
 
 //route to get a sessions
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", athleteVerifyToken, async (req: Request, res: Response) => {
   try {
     //call helper function
     const sessions = await getSessions();
@@ -101,34 +102,40 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 //router to get a session's drills
-router.get("/session_drills/:id", async (req: Request, res: Response) => {
-  //parse the id from the url
-  const session_id = parseInt(req.params.id);
+router.get(
+  "/session_drills/:id",
+  athleteVerifyToken,
+  async (req: Request, res: Response) => {
+    //parse the id from the url
+    const session_id = parseInt(req.params.id);
 
-  //check if id is a number
-  if (isNaN(session_id)) {
-    return res.status(400).json({ message: "Please provide valid ID" });
-  }
+    //check if id is a number
+    if (isNaN(session_id)) {
+      return res.status(400).json({ message: "Please provide valid ID" });
+    }
 
-  try {
-    //call to the helper
-    const session_drills = await getSessionDrills(session_id);
+    try {
+      //call to the helper
+      const session_drills = await getSessionDrills(session_id);
 
-    //if nothing returned responed error status
-    if (!session_drills) {
+      //if nothing returned responed error status
+      if (!session_drills) {
+        return res
+          .status(500)
+          .json({ message: "Error fetching session drills." });
+      }
+
+      //respond success status
+      res.status(200).json(session_drills);
+    } catch (error) {
+      //catch if any errors, respond codes and status
+      logError(error);
       return res
         .status(500)
         .json({ message: "Error fetching session drills." });
     }
-
-    //respond success status
-    res.status(200).json(session_drills);
-  } catch (error) {
-    //catch if any errors, respond codes and status
-    logError(error);
-    return res.status(500).json({ message: "Error fetching session drills." });
   }
-});
+);
 
 //router to delete a session
 router.delete(
