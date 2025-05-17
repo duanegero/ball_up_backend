@@ -66,7 +66,10 @@ router.post("/", async (req: Request, res: Response) => {
       return res.status(500).json({ message: "Error creating trainer." });
     }
     //return success status and code
-    return res.status(201).json({ message: "Trainer created successfully." });
+    return res.status(201).json({
+      message: "Trainer created successfully.",
+      username: newTrainer.username,
+    });
   } catch (error) {
     //catch if any errors, respond codes and status
     logError(error);
@@ -94,7 +97,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 //router to get a trainer by id
-router.get("/:id", trainerVerifyToken, async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   //parse id from url
   const trainer_user_id = parseInt(req.params.id);
 

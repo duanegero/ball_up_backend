@@ -10,7 +10,7 @@ import { athleteLoginRoute } from "./routes/athleteLoginRoute";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 3005;
+const PORT = parseInt(process.env.PORT || "3005", 10);
 
 const app: Application = express();
 
@@ -28,6 +28,4 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Ball Up API");
 });
 
-app.listen(PORT, () =>
-  console.log(`Server running on http://localhost:${PORT}`)
-);
+app.listen(PORT, () => console.log(`Server running on http://0.0.0.0:${PORT}`));

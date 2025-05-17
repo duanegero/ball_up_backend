@@ -62,7 +62,10 @@ router.post("/", async (req: Request, res: Response) => {
     //return success status and code
     return res
       .status(201)
-      .json({ message: "Athlete created successfully.", newAthlete });
+      .json({
+        message: "Athlete created successfully.",
+        username: newAthlete.username,
+      });
   } catch (error) {
     //catch if any errors, respond codes and status
     logError(error);

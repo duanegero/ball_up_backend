@@ -148,6 +148,7 @@ const getTrainer = async (trainer_user_id: number) => {
       where: { trainer_user_id },
       select: {
         trainer_user_id: true,
+        username: true,
         email: true,
         first_name: true,
         last_name: true,
