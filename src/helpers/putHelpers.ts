@@ -79,6 +79,7 @@ const putTrainer = async (
       data: fieldsToUpdate,
       select: {
         trainer_user_id: true,
+        username: true,
         first_name: true,
         last_name: true,
         email: true,
