@@ -12,9 +12,9 @@ import { athleteVerifyToken } from "../middleware/athleteVerifyToken";
 const router: Router = express.Router();
 
 //router to post a session
-router.post("/", trainerVerifyToken, async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   //getting the info from the request body
-  const { length, level } = req.body;
+  const { length, level, session_name } = req.body;
 
   //if all fields aren't filled return error
   if (typeof length !== "number" || typeof level !== "number") {
@@ -25,7 +25,7 @@ router.post("/", trainerVerifyToken, async (req: Request, res: Response) => {
 
   try {
     //variable to handle call to helper function with passed in variables
-    const newSession = await postSession(length, level);
+    const newSession = await postSession(length, level, session_name);
 
     //if nothing returned, respond error status and message
     if (!newSession) {

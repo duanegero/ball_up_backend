@@ -104,13 +104,18 @@ const postDrill = async (
 };
 
 //helper to post a session
-const postSession = async (length: number, level: number) => {
+const postSession = async (
+  length: number,
+  level: number,
+  session_name: string
+) => {
   try {
     //prisma query to create new
     const newSession = await prisma.session.create({
       data: {
         length,
         level,
+        session_name,
       },
     });
     //return result
