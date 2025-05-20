@@ -107,7 +107,8 @@ const postDrill = async (
 const postSession = async (
   length: number,
   level: number,
-  session_name: string
+  session_name: string,
+  trainer_user_id: number
 ) => {
   try {
     //prisma query to create new
@@ -116,6 +117,7 @@ const postSession = async (
         length,
         level,
         session_name,
+        trainer_user_id,
       },
     });
     //return result

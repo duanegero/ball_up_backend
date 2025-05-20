@@ -27,6 +27,7 @@ model Trainer {
     created_at       DateTime  @default(now())
     athletes         Athlete[]
     Drill            Drill[]
+    session Session[]
 
     @@map("trainers")
 }
@@ -68,6 +69,8 @@ model Session {
     length          Int
     level           Int
     session_name    String
+    trainer_user_id Int
+    trainer         Trainer         @relation(fields: [trainer_user_id], references: [trainer_user_id])
     created_at      DateTime          @default(now())
     Athlete_Session Athlete_Session[]
     Session_Drill   Session_Drill[]

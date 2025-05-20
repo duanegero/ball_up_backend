@@ -14,7 +14,7 @@ const router: Router = express.Router();
 //router to post a session
 router.post("/", async (req: Request, res: Response) => {
   //getting the info from the request body
-  const { length, level, session_name } = req.body;
+  const { length, level, session_name, trainer_user_id } = req.body;
 
   //if all fields aren't filled return error
   if (typeof length !== "number" || typeof level !== "number") {
@@ -25,7 +25,12 @@ router.post("/", async (req: Request, res: Response) => {
 
   try {
     //variable to handle call to helper function with passed in variables
-    const newSession = await postSession(length, level, session_name);
+    const newSession = await postSession(
+      length,
+      level,
+      session_name,
+      trainer_user_id
+    );
 
     //if nothing returned, respond error status and message
     if (!newSession) {
