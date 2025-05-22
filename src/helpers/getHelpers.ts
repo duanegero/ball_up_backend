@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, DrillType } from "@prisma/client";
 const prisma = new PrismaClient();
 
 //helper to get all trainer
@@ -72,6 +72,30 @@ const getDrills = async () => {
       },
     });
     //return results
+    return drills;
+  } catch (error) {
+    //catch if any errors, log and return null
+    if (error instanceof Error) {
+      console.error(error.message, error.stack);
+    } else {
+      console.error("An unknown error occurred", error);
+    }
+    return null;
+  }
+};
+
+const getDrillsByType = async (drill_type: DrillType) => {
+  try {
+    const drills = await prisma.drill.findMany({
+      where: { drill_type: drill_type },
+      select: {
+        drill_name: true,
+        description: true,
+        level: true,
+        trainer_user_id: true,
+      },
+    });
+
     return drills;
   } catch (error) {
     //catch if any errors, log and return null
@@ -290,6 +314,32 @@ const getTrainerDrills = async (trainer_user_id: number) => {
   }
 };
 
+const getTrainerSessions = async (trainer_user_id: number) => {
+  try {
+    //variable to handle prisma query
+    const trainer_sessions = await prisma.session.findMany({
+      where: { trainer_user_id },
+      select: {
+        session_id: true,
+        length: true,
+        level: true,
+        session_name: true,
+        trainer_user_id: true,
+      },
+    });
+    //return results
+    return trainer_sessions;
+  } catch (error) {
+    //catch if any errors, log and return null
+    if (error instanceof Error) {
+      console.error(error.message, error.stack);
+    } else {
+      console.error("An unknown error occurred", error);
+    }
+    return null;
+  }
+};
+
 //helper to get trainer username and password
 const getTrainerUsernamePassword = async (trainer_user_id: number) => {
   try {
@@ -351,4 +401,6 @@ export {
   getTrainerDrills,
   getTrainerUsernamePassword,
   getAthleteUsernamePassword,
+  getTrainerSessions,
+  getDrillsByType,
 };

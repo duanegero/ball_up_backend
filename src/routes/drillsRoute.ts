@@ -1,6 +1,6 @@
 import express, { Router, Request, Response } from "express";
 import { postDrill } from "../helpers/postHelpers";
-import { getDrills } from "../helpers/getHelpers";
+import { getDrills, getDrillsByType } from "../helpers/getHelpers";
 import { putDrill } from "../helpers/putHelpers";
 import { deleteDrillFromSessions, deleteDrill } from "../helpers/deleteHelpers";
 import { logError } from "../helpers/logError";
@@ -10,14 +10,16 @@ const router: Router = express.Router();
 //router to post a new drill
 router.post("/", async (req: Request, res: Response) => {
   //getting the info from the request body
-  const { drill_type, description, level, trainer_user_id } = req.body;
+  const { drill_type, description, level, trainer_user_id, drill_name } =
+    req.body;
 
   //if all fields aren't filled return error
   if (
     !drill_type ||
     !description ||
     typeof level !== "number" ||
-    !trainer_user_id
+    !trainer_user_id ||
+    !drill_name
   ) {
     return res
       .status(400)
@@ -30,7 +32,8 @@ router.post("/", async (req: Request, res: Response) => {
       drill_type,
       description,
       level,
-      trainer_user_id
+      trainer_user_id,
+      drill_name
     );
 
     //if nothing returned, respond error status and message
@@ -50,7 +53,7 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 //router to get all drills
-router.get("/", trainerVerifyToken, async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     //call helper function
     const drills = await getDrills();
@@ -62,6 +65,28 @@ router.get("/", trainerVerifyToken, async (req: Request, res: Response) => {
 
     //respond success status
     res.status(200).json({ message: "Drills", drills });
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res.status(500).json({ message: "Error fetching drills." });
+  }
+});
+
+router.get("/drillType", async (req: Request, res: Response) => {
+  //getting data from the request body
+  const { drill_type } = req.body;
+
+  try {
+    //varaible to handle helper function
+    const typeDrills = await getDrillsByType(drill_type);
+
+    //if nothing returned respond error status
+    if (!typeDrills) {
+      return res.status(500).json({ message: "Error fetching drills." });
+    }
+
+    //respond success status
+    res.status(200).json({ typeDrills });
   } catch (error) {
     //catch if any errors, respond codes and status
     logError(error);

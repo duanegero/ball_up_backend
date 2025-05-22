@@ -53,6 +53,7 @@ model Athlete {
 
 model Drill {
     drill_id        Int             @id @default(autoincrement())
+    drill_name String
     drill_type      DrillType
     description     String
     level           Int

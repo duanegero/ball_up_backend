@@ -78,7 +78,8 @@ const postDrill = async (
   drill_type: DrillType,
   description: string,
   level: number,
-  trainer_user_id: number
+  trainer_user_id: number,
+  drill_name: string
 ) => {
   try {
     //prisma query to create new
@@ -88,6 +89,7 @@ const postDrill = async (
         description,
         level,
         trainer_user_id,
+        drill_name,
       },
     });
     //return result

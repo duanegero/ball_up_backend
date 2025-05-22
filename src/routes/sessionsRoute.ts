@@ -87,7 +87,7 @@ router.post(
 );
 
 //route to get a sessions
-router.get("/", athleteVerifyToken, async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     //call helper function
     const sessions = await getSessions();

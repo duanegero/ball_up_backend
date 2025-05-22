@@ -7,6 +7,7 @@ import {
   getTrainerAthletes,
   getTrainerDrills,
   getTrainerUsernamePassword,
+  getTrainerSessions,
 } from "../helpers/getHelpers";
 import {
   putAthleteTrainerNull,
@@ -182,6 +183,36 @@ router.get("/drills/:id", async (req: Request, res: Response) => {
     //catch if any errors, respond codes and status
     logError(error);
     return res.status(500).json({ message: "Error fetching trainers drills." });
+  }
+});
+
+router.get("/sessions/:id", async (req: Request, res: Response) => {
+  //getting id from url
+  const trainer_user_id = parseInt(req.params.id);
+
+  //check if id is a number
+  if (isNaN(trainer_user_id)) {
+    return res.status(400).json({ message: "Please provide valid ID" });
+  }
+
+  try {
+    //call to helper function
+    const trainer_sessions = await getTrainerSessions(trainer_user_id);
+
+    //if nothing return respond error status
+    if (!trainer_sessions) {
+      return res
+        .status(500)
+        .json({ message: "Error fetching trainers drills." });
+    }
+
+    res.status(200).json(trainer_sessions);
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res
+      .status(500)
+      .json({ message: "Error fetching trainers sessions." });
   }
 });
 
