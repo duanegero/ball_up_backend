@@ -5,6 +5,7 @@ import { putDrill } from "../helpers/putHelpers";
 import { deleteDrillFromSessions, deleteDrill } from "../helpers/deleteHelpers";
 import { logError } from "../helpers/logError";
 import { trainerVerifyToken } from "../middleware/trainerVerifyToken";
+import { DrillType } from "@prisma/client";
 const router: Router = express.Router();
 
 //router to post a new drill
@@ -73,8 +74,20 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.get("/drillType", async (req: Request, res: Response) => {
-  //getting data from the request body
-  const { drill_type } = req.body;
+  //getting data from the request query
+  const drill_type_raw = req.query.drill_type;
+
+  // Ensure it's a string
+  if (typeof drill_type_raw !== "string") {
+    return res.status(400).json({ message: "Invalid drill_type." });
+  }
+
+  // Ensure it's a valid DrillType
+  if (!Object.values(DrillType).includes(drill_type_raw as DrillType)) {
+    return res.status(400).json({ message: "Invalid drill_type value." });
+  }
+
+  const drill_type = drill_type_raw as DrillType;
 
   try {
     //varaible to handle helper function

@@ -299,6 +299,7 @@ const getTrainerDrills = async (trainer_user_id: number) => {
         drill_type: true,
         description: true,
         level: true,
+        drill_name: true,
       },
     });
     //return results
