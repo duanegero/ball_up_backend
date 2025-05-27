@@ -190,6 +190,7 @@ router.get("/drills/:id", async (req: Request, res: Response) => {
   }
 });
 
+//route to get trainers sessions
 router.get("/sessions/:id", async (req: Request, res: Response) => {
   //getting id from url
   const trainer_user_id = parseInt(req.params.id);
@@ -343,16 +344,20 @@ router.delete("/:id", async (req: Request, res: Response) => {
   }
 });
 
+//router to delete althlete from trainers list
 router.delete(`/athlete/:id`, async (req: Request, res: Response) => {
+  //getting IDs from request
   const athlete_user_id = parseInt(req.params.id);
   const { trainer_user_id } = req.body;
 
   try {
+    //variable to handle helper
     const deletedAthlete = await deleteTrainersAthlete(
       athlete_user_id,
       trainer_user_id
     );
 
+    //response success status
     return res.status(200).json({
       message: "Athlete removed successfully.",
       athlete: deletedAthlete.athlete_user_id,

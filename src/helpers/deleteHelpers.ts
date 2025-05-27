@@ -152,8 +152,10 @@ const deleteSession = async (session_id: number) => {
   }
 };
 
+//helper to delete drill from session
 const deleteSessionDrill = async (drill_id: number, session_id: number) => {
   try {
+    //prisma query to delete drill
     return await prisma.session_Drill.delete({
       where: {
         session_id_drill_id: {
@@ -173,24 +175,29 @@ const deleteSessionDrill = async (drill_id: number, session_id: number) => {
   }
 };
 
+//helper to delete a athlete from a trainer
 const deleteTrainersAthlete = async (
   athlete_user_id: number,
   trainer_user_id: number
 ) => {
   try {
+    //variable to handle prisma query
     const athlete = await prisma.athlete.findUnique({
       where: { athlete_user_id },
     });
 
+    //error if athlete not found
     if (!athlete) {
       throw new Error("Athlete not found.");
     }
 
+    //error if athlete to assigned to trainer
     if (athlete.trainer_user_id !== trainer_user_id) {
       throw new Error(
         "Unauthorized: This athlete is not assigned to this trainer."
       );
     }
+    //variable to handle prisma query to upddate
     const updatedAthlete = await prisma.athlete.update({
       where: { athlete_user_id },
       data: {
@@ -198,12 +205,15 @@ const deleteTrainersAthlete = async (
       },
     });
 
+    //return to use in app
     return updatedAthlete;
   } catch (error) {
+    //catch and log any errors
     console.error("Error removing trainer from athlete:", error);
     throw error;
   }
 };
+
 //export helpers
 export {
   deleteTrainerDrills,

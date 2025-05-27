@@ -84,8 +84,10 @@ const getDrills = async () => {
   }
 };
 
+//helper to get the drills by type
 const getDrillsByType = async (drill_type: DrillType) => {
   try {
+    //varaible to handle prisma query
     const drills = await prisma.drill.findMany({
       where: { drill_type: drill_type },
       select: {
@@ -96,6 +98,7 @@ const getDrillsByType = async (drill_type: DrillType) => {
       },
     });
 
+    //return all found
     return drills;
   } catch (error) {
     //catch if any errors, log and return null
@@ -316,6 +319,7 @@ const getTrainerDrills = async (trainer_user_id: number) => {
   }
 };
 
+//helper to get trainer sessions
 const getTrainerSessions = async (trainer_user_id: number) => {
   try {
     //variable to handle prisma query

@@ -154,17 +154,22 @@ router.delete("/:id", async (req: Request, res: Response) => {
   }
 });
 
+//router to delete a drill from session
 router.delete("/session_drills/:id", async (req: Request, res: Response) => {
+  //getting the ID from the request
   const drill_id = parseInt(req.params.id);
   const { session_id } = req.body;
 
   try {
+    //variable to handle helper function
     const deleted = await deleteSessionDrill(drill_id, session_id);
 
+    //if nothing returned response error
     if (!deleted) {
       return res.status(404).json({ message: "Drill not found in session." });
     }
 
+    //respond success status
     return res
       .status(200)
       .json({ message: "Drill successfully deleted from session." });
