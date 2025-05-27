@@ -236,6 +236,7 @@ const getAthleteSessions = async (athlete_user_id: number) => {
           select: {
             level: true,
             length: true,
+            session_name: true,
             Session_Drill: {
               select: {
                 drill: {
