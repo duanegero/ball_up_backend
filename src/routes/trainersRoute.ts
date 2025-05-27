@@ -14,7 +14,11 @@ import {
   putTrainer,
   putTrainerPassword,
 } from "../helpers/putHelpers";
-import { deleteTrainerDrills, deleteTrainer } from "../helpers/deleteHelpers";
+import {
+  deleteTrainerDrills,
+  deleteTrainer,
+  deleteTrainersAthlete,
+} from "../helpers/deleteHelpers";
 import { logError } from "../helpers/logError";
 import { trainerVerifyToken } from "../middleware/trainerVerifyToken";
 const router: Router = express.Router();
@@ -311,37 +315,56 @@ router.put(
 );
 
 //router to delete a trainer
-router.delete(
-  "/:id",
-  trainerVerifyToken,
-  async (req: Request, res: Response) => {
-    //get id from the url
-    const trainer_user_id = parseInt(req.params.id);
+router.delete("/:id", async (req: Request, res: Response) => {
+  //get id from the url
+  const trainer_user_id = parseInt(req.params.id);
 
-    //check if id is a number
-    if (isNaN(trainer_user_id)) {
-      return res.status(400).json({ message: "Please provide valid ID" });
-    }
-
-    try {
-      //helper to delete drills
-      await deleteTrainerDrills(trainer_user_id);
-
-      //update athletes trainer
-      await putAthleteTrainerNull(trainer_user_id);
-
-      //delete trainer
-      await deleteTrainer(trainer_user_id);
-
-      //return success status
-      res.status(200).json({ message: `Trainer ${trainer_user_id} deleted.` });
-    } catch (error) {
-      //catch if any errors, respond codes and status
-      logError(error);
-      return res.status(500).json({ message: "Error deleting trainer." });
-    }
+  //check if id is a number
+  if (isNaN(trainer_user_id)) {
+    return res.status(400).json({ message: "Please provide valid ID" });
   }
-);
+
+  try {
+    //helper to delete drills
+    await deleteTrainerDrills(trainer_user_id);
+
+    //update athletes trainer
+    await putAthleteTrainerNull(trainer_user_id);
+
+    //delete trainer
+    await deleteTrainer(trainer_user_id);
+
+    //return success status
+    res.status(200).json({ message: `Trainer ${trainer_user_id} deleted.` });
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res.status(500).json({ message: "Error deleting trainer." });
+  }
+});
+
+router.delete(`/athlete/:id`, async (req: Request, res: Response) => {
+  const athlete_user_id = parseInt(req.params.id);
+  const { trainer_user_id } = req.body;
+
+  try {
+    const deletedAthlete = await deleteTrainersAthlete(
+      athlete_user_id,
+      trainer_user_id
+    );
+
+    return res.status(200).json({
+      message: "Athlete removed successfully.",
+      athlete: deletedAthlete.athlete_user_id,
+    });
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res
+      .status(500)
+      .json({ message: "Error deleting trainers athlete." });
+  }
+});
 
 //export to use in app
 export { router as trainersRoute };

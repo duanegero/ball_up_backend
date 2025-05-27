@@ -157,7 +157,7 @@ const deleteSessionDrill = async (drill_id: number, session_id: number) => {
     return await prisma.session_Drill.delete({
       where: {
         session_id_drill_id: {
-          session_id,
+          session_id: Number(session_id),
           drill_id,
         },
       },
@@ -172,6 +172,38 @@ const deleteSessionDrill = async (drill_id: number, session_id: number) => {
     return null;
   }
 };
+
+const deleteTrainersAthlete = async (
+  athlete_user_id: number,
+  trainer_user_id: number
+) => {
+  try {
+    const athlete = await prisma.athlete.findUnique({
+      where: { athlete_user_id },
+    });
+
+    if (!athlete) {
+      throw new Error("Athlete not found.");
+    }
+
+    if (athlete.trainer_user_id !== trainer_user_id) {
+      throw new Error(
+        "Unauthorized: This athlete is not assigned to this trainer."
+      );
+    }
+    const updatedAthlete = await prisma.athlete.update({
+      where: { athlete_user_id },
+      data: {
+        trainer_user_id: null,
+      },
+    });
+
+    return updatedAthlete;
+  } catch (error) {
+    console.error("Error removing trainer from athlete:", error);
+    throw error;
+  }
+};
 //export helpers
 export {
   deleteTrainerDrills,
@@ -183,4 +215,5 @@ export {
   deleteSessionDrills,
   deleteSession,
   deleteSessionDrill,
+  deleteTrainersAthlete,
 };
