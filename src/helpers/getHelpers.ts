@@ -147,6 +147,7 @@ const getSessionDrills = async (session_id: number) => {
             drill_type: true,
             description: true,
             level: true,
+            drill_name: true,
           },
         },
       },

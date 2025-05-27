@@ -152,6 +152,26 @@ const deleteSession = async (session_id: number) => {
   }
 };
 
+const deleteSessionDrill = async (drill_id: number, session_id: number) => {
+  try {
+    return await prisma.session_Drill.delete({
+      where: {
+        session_id_drill_id: {
+          session_id,
+          drill_id,
+        },
+      },
+    });
+  } catch (error) {
+    //catch if any errors, log and return null
+    if (error instanceof Error) {
+      console.error(error.message, error.stack);
+    } else {
+      console.error("An unknown error occurred", error);
+    }
+    return null;
+  }
+};
 //export helpers
 export {
   deleteTrainerDrills,
@@ -162,4 +182,5 @@ export {
   deleteAthlete,
   deleteSessionDrills,
   deleteSession,
+  deleteSessionDrill,
 };
