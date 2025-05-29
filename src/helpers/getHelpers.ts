@@ -205,11 +205,12 @@ const getAthlete = async (athlete_user_id: number) => {
       where: { athlete_user_id },
       select: {
         athlete_user_id: true,
+        username: true,
+        email: true,
         first_name: true,
         last_name: true,
         age: true,
         level: true,
-        email: true,
       },
     });
     //return results

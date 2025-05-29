@@ -214,6 +214,30 @@ const deleteTrainersAthlete = async (
   }
 };
 
+//helper to delete a athlete session
+const deleteAthleteSession = async (
+  athlete_user_id: number,
+  session_id: number
+) => {
+  try {
+    //variable to handle prisma query
+    const deleted = await prisma.athlete_Session.delete({
+      where: {
+        athlete_user_id_session_id: {
+          athlete_user_id,
+          session_id,
+        },
+      },
+    });
+    //return result
+    return deleted;
+  } catch (error) {
+    //catch and log if any errors
+    console.error("Failed to delete athlete session:", error);
+    throw error;
+  }
+};
+
 //export helpers
 export {
   deleteTrainerDrills,
@@ -226,4 +250,5 @@ export {
   deleteSession,
   deleteSessionDrill,
   deleteTrainersAthlete,
+  deleteAthleteSession,
 };

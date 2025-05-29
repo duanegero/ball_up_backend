@@ -12,7 +12,11 @@ import {
   putAthlete,
   putAthletePassword,
 } from "../helpers/putHelpers";
-import { deleteAthleteSessions, deleteAthlete } from "../helpers/deleteHelpers";
+import {
+  deleteAthleteSessions,
+  deleteAthlete,
+  deleteAthleteSession,
+} from "../helpers/deleteHelpers";
 import { logError } from "../helpers/logError";
 import { trainerVerifyToken } from "../middleware/trainerVerifyToken";
 import { athleteVerifyToken } from "../middleware/athleteVerifyToken";
@@ -128,7 +132,7 @@ router.get("/", trainerVerifyToken, async (req: Request, res: Response) => {
 });
 
 //router to get a single athlete by id
-router.get("/:id", athleteVerifyToken, async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   //parse id from url
   const athlete_user_id = parseInt(req.params.id);
 
@@ -147,7 +151,7 @@ router.get("/:id", athleteVerifyToken, async (req: Request, res: Response) => {
     }
 
     //respond success status
-    res.status(200).json({ message: "Athlete", athlete });
+    res.status(200).json(athlete);
   } catch (error) {
     //catch if any errors, respond codes and status
     logError(error);
@@ -349,5 +353,26 @@ router.delete(
     }
   }
 );
+
+//router to delete a athlete session
+router.delete("/session/:id", async (req: Request, res: Response) => {
+  //getting ids from request
+  const athlete_user_id = parseInt(req.params.id);
+  const { session_id } = req.body;
+
+  try {
+    //call helper function
+    await deleteAthleteSession(athlete_user_id, session_id);
+
+    //return success status
+    res.status(200).json({ message: "Session Deleted." });
+  } catch (error) {
+    //catch if any errors, respond codes and status
+    logError(error);
+    return res
+      .status(500)
+      .json({ message: "Error deleting athletes session." });
+  }
+});
 
 export { router as athletesRoute };
