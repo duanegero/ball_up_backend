@@ -117,17 +117,31 @@ const putAthlete = async (
       return null;
     }
 
-    //filter out nulls and undfineds
+    //filter out nulls and undefineds
     const fieldsToUpdate = Object.fromEntries(
       Object.entries(updatedFields).filter(
         ([_, value]) => value !== undefined && value !== null
       )
     );
 
-    //if nothing found to update return null
-    if (Object.keys(fieldsToUpdate).length === 0) {
-      return null;
+    // Convert to number where needed
+    if (
+      fieldsToUpdate.level &&
+      typeof fieldsToUpdate.level === "string" &&
+      !isNaN(Number(fieldsToUpdate.level))
+    ) {
+      fieldsToUpdate.level = Number(fieldsToUpdate.level);
     }
+
+    // Convert to number where needed
+    if (
+      fieldsToUpdate.age &&
+      typeof fieldsToUpdate.age === "string" &&
+      !isNaN(Number(fieldsToUpdate.age))
+    ) {
+      fieldsToUpdate.age = Number(fieldsToUpdate.age);
+    }
+
     //prisma query to update
     const updatedAthlete = await prisma.athlete.update({
       where: { athlete_user_id },

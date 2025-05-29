@@ -233,7 +233,7 @@ router.put("/assign_trainer/:id", async (req: Request, res: Response) => {
 });
 
 //router to put a athlete
-router.put("/:id", athleteVerifyToken, async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response) => {
   //get id from the url
   const athlete_user_id = parseInt(req.params.id);
 
@@ -355,24 +355,27 @@ router.delete(
 );
 
 //router to delete a athlete session
-router.delete("/session/:id", async (req: Request, res: Response) => {
-  //getting ids from request
-  const athlete_user_id = parseInt(req.params.id);
-  const { session_id } = req.body;
+router.delete(
+  "/session/:athlete_user_id/:session_id",
+  async (req: Request, res: Response) => {
+    //getting ids from request
+    const athlete_user_id = parseInt(req.params.athlete_user_id);
+    const session_id = parseInt(req.params.session_id);
 
-  try {
-    //call helper function
-    await deleteAthleteSession(athlete_user_id, session_id);
+    try {
+      //call helper function
+      await deleteAthleteSession(athlete_user_id, session_id);
 
-    //return success status
-    res.status(200).json({ message: "Session Deleted." });
-  } catch (error) {
-    //catch if any errors, respond codes and status
-    logError(error);
-    return res
-      .status(500)
-      .json({ message: "Error deleting athletes session." });
+      //return success statusgo
+      res.status(200).json({ message: "Session Deleted." });
+    } catch (error) {
+      //catch if any errors, respond codes and status
+      logError(error);
+      return res
+        .status(500)
+        .json({ message: "Error deleting athletes session." });
+    }
   }
-});
+);
 
 export { router as athletesRoute };
