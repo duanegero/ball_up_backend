@@ -113,7 +113,7 @@ router.post("/athlete_sessions/:id", async (req: Request, res: Response) => {
 });
 
 //router to get all athletes
-router.get("/", trainerVerifyToken, async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     //call helper function
     const athletes = await getAthletes();

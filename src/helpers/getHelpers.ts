@@ -37,6 +37,7 @@ const getAthletes = async () => {
       orderBy: { created_at: "desc" },
       select: {
         athlete_user_id: true,
+        username: true,
         first_name: true,
         last_name: true,
         email: true,
@@ -211,6 +212,14 @@ const getAthlete = async (athlete_user_id: number) => {
         last_name: true,
         age: true,
         level: true,
+        trainer: {
+          select: {
+            first_name: true,
+            last_name: true,
+            bio: true,
+            years_experience: true,
+          },
+        },
       },
     });
     //return results
