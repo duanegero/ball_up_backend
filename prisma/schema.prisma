@@ -82,6 +82,7 @@ model Session {
 model Athlete_Session {
     athlete_user_id Int
     session_id      Int
+    completed Boolean @default(false)
 
     athlete Athlete @relation(fields: [athlete_user_id], references: [athlete_user_id])
     session Session @relation(fields: [session_id], references: [session_id])
