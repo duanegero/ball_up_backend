@@ -280,6 +280,34 @@ const putAthletePassword = async (
   }
 };
 
+const putAthleteSession = async (
+  athlete_user_id: number,
+  session_id: number
+): Promise<boolean> => {
+  try {
+    console.log("Updating athlete_session with:", athlete_user_id, session_id);
+
+    const result = await prisma.athlete_Session.update({
+      where: {
+        athlete_user_id_session_id: {
+          athlete_user_id,
+          session_id,
+        },
+      },
+      data: {
+        completed: true,
+      },
+    });
+
+    console.log("Update result:", result);
+
+    return true;
+  } catch (error) {
+    console.error("Error during update:", error);
+    throw error;
+  }
+};
+
 export {
   putAthleteTrainer,
   putTrainer,
@@ -288,4 +316,5 @@ export {
   putAthleteTrainerNull,
   putTrainerPassword,
   putAthletePassword,
+  putAthleteSession,
 };

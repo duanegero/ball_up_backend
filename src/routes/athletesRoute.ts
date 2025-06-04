@@ -11,6 +11,7 @@ import {
   putAthleteTrainer,
   putAthlete,
   putAthletePassword,
+  putAthleteSession,
 } from "../helpers/putHelpers";
 import {
   deleteAthleteSessions,
@@ -20,6 +21,7 @@ import {
 import { logError } from "../helpers/logError";
 import { trainerVerifyToken } from "../middleware/trainerVerifyToken";
 import { athleteVerifyToken } from "../middleware/athleteVerifyToken";
+import { Prisma } from "@prisma/client";
 
 const router: Router = express.Router();
 
@@ -354,7 +356,36 @@ router.delete(
   }
 );
 
-//router to delete a athlete session
+router.put(
+  "/athlete_sessions/:athlete_user_id/:session_id",
+  async (req: Request, res: Response) => {
+    console.log("PUT route hit ✅");
+
+    const { athlete_user_id, session_id } = req.params;
+
+    const athleteIdNum = Number(athlete_user_id);
+    const sessionIdNum = Number(session_id);
+
+    if (isNaN(athleteIdNum) || isNaN(sessionIdNum)) {
+      return res.status(400).json({ error: "Invalid athlete or session ID" });
+    }
+
+    try {
+      const success = await putAthleteSession(athleteIdNum, sessionIdNum);
+
+      if (success) {
+        res.status(200).json({ message: "Session marked complete." });
+      } else {
+        res.status(500).json({ error: "Could not update session." });
+      }
+    } catch (error) {
+      console.error("Error completing session:", error);
+      res.status(500).json({ error: "Failed to mark session as completed." });
+    }
+  }
+);
+
+// router to delete a athlete session
 router.delete(
   "/session/:athlete_user_id/:session_id",
   async (req: Request, res: Response) => {

@@ -80,16 +80,18 @@ model Session {
 }
 
 model Athlete_Session {
-    athlete_user_id Int
-    session_id      Int
-    completed Boolean @default(false)
+  athlete_user_id Int
+  session_id      Int
+  completed       Boolean @default(false)
 
-    athlete Athlete @relation(fields: [athlete_user_id], references: [athlete_user_id])
-    session Session @relation(fields: [session_id], references: [session_id])
+  athlete Athlete @relation(fields: [athlete_user_id], references: [athlete_user_id])
+  session Session @relation(fields: [session_id], references: [session_id])
 
-    @@id([athlete_user_id, session_id])
-    @@map("athlete_sessions")
+  @@id([athlete_user_id, session_id], name: "athlete_user_id_session_id") // <== KEY LINE
+  @@map("athlete_sessions")
 }
+
+
 
 model Session_Drill {
     session_id Int
